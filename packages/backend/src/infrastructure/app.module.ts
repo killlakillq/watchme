@@ -14,7 +14,7 @@ import { PrismaClient } from '@prisma/client';
   providers: [AppLogger, LogsRepository, PrismaClient]
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  public configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

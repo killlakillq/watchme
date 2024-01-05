@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class AnimeListIntegration {
-  private async getAnime() {}
+  public async getAnime() {}
 
-  private async searchAnime() {}
+  public async searchAnime() {}
 }

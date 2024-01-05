@@ -24,9 +24,7 @@ export class MovieService {
 
   public async addMovieToWatchList(body: MovieDto) {
     const movie = await this.movieRepository.add(body);
-    if (movie) {
-      this.redisRepository.set(TMDB.TYPE.MOVIE, JSON.stringify(body), REDIS.EXPIRE);
-    }
+
     return {
       status: HttpStatus.CREATED,
       data: movie
