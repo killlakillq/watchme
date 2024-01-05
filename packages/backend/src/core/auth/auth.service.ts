@@ -8,7 +8,7 @@ import { Tokens } from '../../common/types';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthService {
   public constructor(
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService

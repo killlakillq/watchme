@@ -10,7 +10,7 @@ async function bootstrap() {
   app.setGlobalPrefix(APP.GLOBAL_PREFIX);
   app.enableCors({
     origin: [CORS.ORIGIN],
-    methods: [CORS.METHODS],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true
   });
 

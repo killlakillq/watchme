@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-config({ path: '../../.env'});
+config({ path: '../../.env' });
 
 export const TMDB = {
   ACCESS_TOKEN: process.env.TMDB_ACCESS_TOKEN,
@@ -22,8 +22,7 @@ export const REDIS = {
 };
 
 export const CORS = {
-  ORIGIN: process.env.CORS_ORIGIN,
-  METHODS: process.env.CORS_METHODS
+  ORIGIN: process.env.CORS_ORIGIN
 };
 
 export const APP = {

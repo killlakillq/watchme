@@ -1,5 +1,5 @@
 import { REDIS, TMDB } from '../../common/constants';
-import { TheMovieDatabaseIntegration } from '../../integrations/movie.integration';
+import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
 import { MovieDto, ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
 import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
@@ -10,11 +10,11 @@ export class MovieService {
   public constructor(
     private readonly movieRepository: MovieRepository,
     private readonly redisRepository: RedisRepository,
-    private readonly theMovieDatabaseIntegration: TheMovieDatabaseIntegration
+    private readonly movieDatabaseIntegration: MovieDatabaseIntegration
   ) {}
 
   public async showMovies(queries: ShowMovieQueriesDto) {
-    const { body, statusCode } = await this.theMovieDatabaseIntegration.getMovies(queries);
+    const { body, statusCode } = await this.movieDatabaseIntegration.getMovies(queries);
 
     return {
       status: statusCode,
@@ -66,7 +66,7 @@ export class MovieService {
   }
 
   public async searchMovies(queries: SearchMovieQueriesDto) {
-    const { body, statusCode } = await this.theMovieDatabaseIntegration.searchMovies(queries);
+    const { body, statusCode } = await this.movieDatabaseIntegration.searchMovies(queries);
 
     return {
       status: statusCode,

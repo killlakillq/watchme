@@ -5,7 +5,7 @@ import { AppLogger } from '../../helpers/logger';
 import { MovieService } from './movie.service';
 import { MovieController } from '../../infrastructure/controllers/movie.contoller';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
-import { TheMovieDatabaseIntegration } from '../../integrations/movie.integration';
+import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
 import { RedisStorage } from '../../infrastructure/database/redis/redis.storage';
 import { JwtService } from '@nestjs/jwt';
 
@@ -17,7 +17,7 @@ import { JwtService } from '@nestjs/jwt';
     PrismaClient,
     RedisRepository,
     MovieRepository,
-    TheMovieDatabaseIntegration,
+    MovieDatabaseIntegration,
     AppLogger,
     RedisStorage,
     JwtService

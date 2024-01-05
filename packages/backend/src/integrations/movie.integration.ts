@@ -4,7 +4,7 @@ import { ShowMovieQueriesDto, SearchMovieQueriesDto } from '../core/movie/entiti
 import { request } from 'undici';
 
 @Injectable()
-export class TheMovieDatabaseIntegration {
+export class MovieDatabaseIntegration {
   public async getMovies({ lists, language, page }: ShowMovieQueriesDto) {
     const { body, statusCode } = await request(
       `${TMDB.URL}/${TMDB.TYPE.MOVIE}/${lists}?language=${language}&page=${page}`,

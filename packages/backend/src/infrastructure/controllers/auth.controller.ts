@@ -5,10 +5,8 @@ import {
   HttpStatus,
   Post,
   Req,
-  UseFilters,
   UseGuards
 } from '@nestjs/common';
-import { AuthenticationService } from '../../core/auth/authentication.service';
 import { UserDto } from '../../core/auth/entities/dtos/auth.dto';
 import { Request } from 'express';
 import { ServerResponse } from '../../common/types';
@@ -32,11 +30,12 @@ import {
   unauthorizedSchema,
   forbiddenSchema
 } from '../../common/documents/schemas';
+import { AuthService } from 'src/core/auth/auth.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  public constructor(private readonly authenticationService: AuthenticationService) {}
+  public constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
   @ApiBody({ type: UserDto })
@@ -45,7 +44,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async signUp(@Body() body: UserDto): Promise<ServerResponse> {
-    const tokens = await this.authenticationService.signUp(body);
+    const tokens = await this.authService.signUp(body);
     return {
       status: HttpStatus.CREATED,
       message: 'Tokens was successfully obtained',
@@ -60,7 +59,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async signIn(@Body() body: UserDto): Promise<ServerResponse> {
-    const tokens = await this.authenticationService.signIn(body);
+    const tokens = await this.authService.signIn(body);
     return {
       status: HttpStatus.OK,
       message: 'Tokens was successfully obtained',
@@ -80,7 +79,7 @@ export class AuthController {
   public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
     const id = req.user['email'];
     const refreshToken = req.user['refreshToken'];
-    const tokens = await this.authenticationService.refreshTokens(id, refreshToken);
+    const tokens = await this.authService.refreshTokens(id, refreshToken);
     return {
       status: HttpStatus.OK,
       message: 'Tokens was successfully obtained',
@@ -96,7 +95,7 @@ export class AuthController {
   @ApiOperation({ summary: 'User logout' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   public async logout(@Req() req: Request): Promise<ServerResponse> {
-    await this.authenticationService.logout(req.user['sub']);
+    await this.authService.logout(req.user['sub']);
     return {
       status: HttpStatus.OK,
       message: 'User was successfully logout',
