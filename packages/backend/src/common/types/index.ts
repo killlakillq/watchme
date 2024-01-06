@@ -11,7 +11,7 @@ export class ServerResponse {
   @ApiProperty({ example: '201' })
   status: number;
 
-  @ApiProperty({ example: 'Name of movie was successfully obtained' })
+  @ApiProperty({ example: 'Name of movie was successfully fetched' })
   message: string;
 
   @ApiProperty({ example: { id: 1, title: 'title', description: 'description' } })

@@ -10,40 +10,36 @@ export class LoggerMiddleware implements NestMiddleware {
     private readonly logsRepository: LogsRepository
   ) {}
 
-  use(req: Request, res: Response, next: NextFunction) {
+  public use(req: Request, res: Response, next: NextFunction) {
     const { method, originalUrl } = req;
     const userAgent = req.get('user-agent');
     const timestamp = new Date().toISOString();
 
-    this.logger.log(`Request: method: ${method}, path: ${originalUrl}`, {
+    const requestMessage = `Request: method: ${method}, path: ${originalUrl}`;
+
+    this.logger.log(requestMessage, {
       userAgent
     });
 
     res.on('finish', async () => {
       const { statusCode, statusMessage } = res;
+      const responseMessage = `Response: ${statusCode} ${statusMessage}`;
 
-      const message = `Response: ${statusCode} ${statusMessage}`;
-
-      if (
-        statusCode === HttpStatus.INTERNAL_SERVER_ERROR ||
-        statusCode === HttpStatus.NOT_FOUND ||
-        statusCode === HttpStatus.UNAUTHORIZED ||
-        statusCode === HttpStatus.FORBIDDEN
-      ) {
-        this.logger.error(message, {
-          userAgent
-        });
-
+      if (statusCode !== HttpStatus.OK && statusCode !== HttpStatus.CREATED) {
         await this.logsRepository.create({
           level: 'error',
           timestamp,
-          message: statusMessage,
-          method: method,
+          message: responseMessage,
+          method,
           path: originalUrl,
           userAgent
         });
+
+        this.logger.error(responseMessage, {
+          userAgent
+        });
       } else {
-        this.logger.log(message, {
+        this.logger.log(responseMessage, {
           userAgent
         });
       }

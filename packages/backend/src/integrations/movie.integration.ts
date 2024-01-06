@@ -6,7 +6,7 @@ import { request } from 'undici';
 @Injectable()
 export class MovieDatabaseIntegration {
   public async getMovies({ lists, language, page }: ShowMovieQueriesDto) {
-    const { body, statusCode } = await request(
+    const { body, statusCode: status } = await request(
       `${TMDB.URL}/${TMDB.TYPE.MOVIE}/${lists}?language=${language}&page=${page}`,
       {
         method: 'GET',
@@ -16,11 +16,12 @@ export class MovieDatabaseIntegration {
         }
       }
     );
-    return { body, statusCode };
+    const data = await body.json();
+    return { data, status };
   }
 
   public async searchMovies(queries: SearchMovieQueriesDto) {
-    const { body, statusCode } = await request(
+    const { body, statusCode: status } = await request(
       `${TMDB.URL}/search/${TMDB.TYPE.MOVIE}
       ?query=${queries.title}
       &include_adult=${queries.includeAdult}
@@ -37,6 +38,7 @@ export class MovieDatabaseIntegration {
         }
       }
     );
-    return { body, statusCode };
+    const data = await body.json();
+    return { data, status };
   }
 }

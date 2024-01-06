@@ -24,6 +24,7 @@ export class TokenService {
       sub: id,
       email
     };
+    
     const [access, refresh] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: JWT.ACCESS_SECRET,

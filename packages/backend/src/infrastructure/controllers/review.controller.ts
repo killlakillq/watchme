@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from '@nestjs/common';
 import { ReviewService } from '../../core/review/review.service';
 import { ReviewDto } from '../../core/review/entities/dtos/review.dto';
 import { ServerResponse } from '../../common/types';
@@ -19,7 +19,8 @@ import {
   notFoundSchema,
   unauthorizedSchema,
   internalServerErrorSchema
-} from '../../common/documents/schemas';
+} from '../../common/documents';
+import { Response } from 'express';
 
 @ApiTags('Reviews')
 @Controller('reviews')
@@ -35,19 +36,18 @@ export class ReviewController {
   @ApiOperation({ summary: 'Create review' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async createReview(@Body() body: ReviewDto): Promise<ServerResponse> {
-    const review = await this.reviewService.createReview(body);
-    if (!review) {
-      return {
-        status: 404,
-        message: 'Review not found',
-        data: null
-      };
-    }
+  public async createReview(
+    @Body() body: ReviewDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<ServerResponse> {
+    const { status, message, data } = await this.reviewService.createReview(body);
+
+    res.status(status);
+
     return {
-      status: review.status,
-      message: 'Review was successfully created',
-      data: review.data
+      status,
+      message,
+      data
     };
   }
 
@@ -56,19 +56,36 @@ export class ReviewController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Show reviews' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showReviews(): Promise<ServerResponse> {
-    const review = await this.reviewService.showReviews();
-    if (!review) {
-      return {
-        status: 404,
-        message: 'Review not found',
-        data: null
-      };
-    }
+  public async showReviews(@Res({ passthrough: true }) res: Response): Promise<ServerResponse> {
+    const { status, message, data } = await this.reviewService.showReviews();
+
+    res.status(status);
+
     return {
-      status: review.status,
-      message: 'List of movies were successfully obtained',
-      data: review.data
+      status,
+      message,
+      data
+    };
+  }
+
+  @Get('/:id')
+  @ApiCreatedResponse(responseSchema)
+  @ApiNotFoundResponse(notFoundSchema)
+  @ApiParam({ type: 'string', name: 'id' })
+  @ApiOperation({ summary: 'Show review' })
+  @ApiInternalServerErrorResponse(internalServerErrorSchema)
+  public async getReviewComment(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<ServerResponse> {
+    const { status, message, data } = await this.reviewService.getReviewComment(id);
+
+    res.status(status);
+
+    return {
+      status,
+      message,
+      data
     };
   }
 
@@ -84,20 +101,17 @@ export class ReviewController {
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async updateReview(
     @Param('id') id: string,
-    @Body() body: ReviewDto
+    @Body() body: ReviewDto,
+    @Res({ passthrough: true }) res: Response
   ): Promise<ServerResponse> {
-    const review = await this.reviewService.updateReview(id, body);
-    if (!review) {
-      return {
-        status: 404,
-        message: 'Review not found',
-        data: null
-      };
-    }
+    const { status, message, data } = await this.reviewService.updateReview(id, body);
+
+    res.status(status);
+
     return {
-      status: review.status,
-      message: 'Review was successfully updated',
-      data: review.data
+      status,
+      message,
+      data
     };
   }
 
@@ -110,19 +124,18 @@ export class ReviewController {
   @ApiOperation({ summary: 'Delete review' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteReview(@Param('id') id: string): Promise<ServerResponse> {
-    const review = await this.reviewService.deleteReview(id);
-    if (!review) {
-      return {
-        status: 404,
-        message: 'Review not found',
-        data: null
-      };
-    }
+  public async deleteReview(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<ServerResponse> {
+    const { status, message, data } = await this.reviewService.deleteReview(id);
+
+    res.status(status);
+
     return {
-      status: review.status,
-      message: 'Review was successfully deleted',
-      data: review.data
+      status,
+      message,
+      data
     };
   }
 }
