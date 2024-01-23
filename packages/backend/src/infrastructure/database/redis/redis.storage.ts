@@ -1,11 +1,11 @@
 import Redis from 'ioredis';
-import { redisOptions } from '../../../common/configs';
+import { REDIS_OPTIONS } from '../../../common/configs';
 
 export class RedisStorage {
   private redis: Redis;
 
   public constructor() {
-    this.redis = new Redis(redisOptions);
+    this.redis = new Redis(REDIS_OPTIONS);
   }
 
   public async set(key: string, data: string, ttl: number) {

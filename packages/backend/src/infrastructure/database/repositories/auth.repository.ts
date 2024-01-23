@@ -8,24 +8,50 @@ export default class AuthRepository implements UserMethods {
   public constructor(private readonly prisma: PrismaClient) {}
 
   public async create(data: UserDto): Promise<User> {
-    return await this.prisma.user.create({
+    return this.prisma.user.create({
       data
     });
   }
 
-  public async find(email: string): Promise<User> {
-    return await this.prisma.user.findUnique({
+  public async findUserByEmail(email: string): Promise<User> {
+    return this.prisma.user.findUnique({
       where: {
         email
       }
     });
   }
 
-  public async updateToken(id: string, token: string): Promise<User> {
-    return await this.prisma.user.update({
+  public async findUserById(id: string): Promise<User> {
+    return this.prisma.user.findUnique({
+      where: {
+        id
+      }
+    });
+  }
+
+  public async updateRefreshToken(id: string, token: string): Promise<User> {
+    return this.prisma.user.update({
       where: { id },
       data: {
         refreshToken: token
+      }
+    });
+  }
+
+  public async updateResetToken(id: string, token: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        resetToken: token
+      }
+    });
+  }
+
+  public async updatePassword(email: string, password: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { email },
+      data: {
+        password
       }
     });
   }

@@ -1,9 +1,9 @@
-import { REDIS, TMDB } from '../../common/constants';
+import { ForbiddenException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { EXCEPTIONS, REDIS, TMDB } from '../../common/constants';
 import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
 import { MovieDto, ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
 import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
-import { HttpStatus, Injectable } from '@nestjs/common';
 import { ServerResponse } from '../../common/types';
 
 @Injectable()
@@ -16,12 +16,12 @@ export class MovieService {
 
   public async showMovies(queries: ShowMovieQueriesDto): Promise<ServerResponse> {
     const movies = await this.movieDatabaseIntegration.getMovies(queries);
-    if (movies.status == HttpStatus.NOT_FOUND) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'List of movies not found',
-        data: movies.data
-      };
+    if (movies.status === HttpStatus.NOT_FOUND) {
+      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+    }
+
+    if (movies.status === HttpStatus.UNAUTHORIZED) {
+      throw new ForbiddenException(EXCEPTIONS.UNAUTHORIZED);
     }
 
     return {
@@ -35,11 +35,7 @@ export class MovieService {
     const movie = await this.movieRepository.add(body);
 
     if (!movie) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Movie not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
 
     return {
@@ -62,11 +58,7 @@ export class MovieService {
     const watchList = await this.movieRepository.find();
     await this.redisRepository.set('watchlist', JSON.stringify(watchList), REDIS.EXPIRE);
     if (!watchList) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Movies in watch list not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
 
     return {
@@ -80,11 +72,7 @@ export class MovieService {
     const deletedMovie = await this.movieRepository.delete(id);
 
     if (!deletedMovie) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Movies in watch list not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
 
     return {
@@ -98,11 +86,11 @@ export class MovieService {
     const movies = await this.movieDatabaseIntegration.searchMovies(queries);
 
     if (movies.status === HttpStatus.NOT_FOUND) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Movie not found',
-        data: movies.data
-      };
+      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+    }
+
+    if (movies.status === HttpStatus.UNAUTHORIZED) {
+      throw new ForbiddenException(EXCEPTIONS.UNAUTHORIZED);
     }
 
     return {

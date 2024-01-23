@@ -1,9 +1,5 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { UserDto } from '../../core/auth/entities/dtos/auth.dto';
-import { Request, Response } from 'express';
-import { ServerResponse } from '../../common/types';
-import { JwtAccessGuard } from '../../common/guards/access-token.guard';
-import { JwtRefreshGuard } from '../../common/guards/refresh-token.guard';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -11,10 +7,15 @@ import {
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
+import { UserDto } from '../../core/auth/entities/dtos/auth.dto';
+import { ServerResponse } from '../../common/types';
+import { JwtAccessGuard } from '../../common/guards/access-token.guard';
+import { JwtRefreshGuard } from '../../common/guards/refresh-token.guard';
 import {
   responseSchema,
   notFoundSchema,
@@ -35,40 +36,18 @@ export class AuthController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Register user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signUp(
-    @Body() body: UserDto,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.authService.signUp(body);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async signUp(@Body() body: UserDto): Promise<ServerResponse> {
+    return this.authService.signUp(body);
   }
 
   @Post('/signin')
   @ApiBody({ type: UserDto })
-  @ApiCreatedResponse(responseSchema)
+  @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Login user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signIn(
-    @Body() body: UserDto,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.authService.signIn(body);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async signIn(@Body() body: UserDto): Promise<ServerResponse> {
+    return this.authService.signIn(body);
   }
 
   @Get('/refresh')
@@ -80,43 +59,41 @@ export class AuthController {
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: "Update user's tokens" })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async updateTokens(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const id = req.user['email'];
-    const refreshToken = req.user['refreshToken'];
-    const { status, message, data } = await this.authService.refreshTokens(id, refreshToken);
+  public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
+    const id = req.user.email;
+    const { refreshToken } = req.user;
+    return this.authService.refreshTokens(id, refreshToken);
+  }
 
-    res.status(status);
+  @Post('/forgot-password')
+  @ApiOkResponse(responseSchema)
+  @ApiNotFoundResponse(notFoundSchema)
+  @ApiForbiddenResponse(forbiddenSchema)
+  @ApiOperation({ summary: 'Request reset password' })
+  @ApiInternalServerErrorResponse(internalServerErrorSchema)
+  public async forgotPassword(@Body() email: string): Promise<ServerResponse> {
+    return this.authService.forgotPassword(email);
+  }
 
-    return {
-      status,
-      message,
-      data
-    };
+  @Get('reset-password')
+  @ApiOkResponse(responseSchema)
+  @ApiNotFoundResponse(notFoundSchema)
+  @ApiForbiddenResponse(forbiddenSchema)
+  @ApiOperation({ summary: 'Request reset password' })
+  @ApiInternalServerErrorResponse(internalServerErrorSchema)
+  public async resetPassword(@Query() id: string, @Query() token: string): Promise<ServerResponse> {
+    return this.authService.resetPassword(id, token);
   }
 
   @Post('/logout')
   @ApiBearerAuth()
   @UseGuards(JwtAccessGuard)
-  @ApiCreatedResponse(responseSchema)
+  @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'User logout' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
-  public async logout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const user = req.user['sub'];
-    const { status, message, data } = await this.authService.logout(user);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async logout(@Req() req: Request): Promise<ServerResponse> {
+    const user = req.user.sub;
+    return this.authService.logout(user);
   }
 }

@@ -1,0 +1,4 @@
+export const JWT = {
+  ACCESS_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  REFRESH_SECRET: process.env.REFRESH_TOKEN_SECRET
+};

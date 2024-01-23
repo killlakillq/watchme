@@ -29,14 +29,15 @@ plugins:
   - react
   - '@typescript-eslint'
   - prettier
+  - unused-imports
 
 # ⭐ Settings
 settings:
   import/parsers:
     '@typescript-eslint/parser': ['.ts', '.tsx']
   import/resolver:
-    typescript:
-      alwaysTryTypes: true
+    node:
+      extensions: ['.js', '.jsx', '.ts', '.tsx']
 
 # ⭐ Rules
 rules:
@@ -87,7 +88,7 @@ rules:
   # We use for..in
   no-restricted-syntax: 'off'
   # We like arrow parenthesis
-  prettier/prettier: [error, { arrowParens: always }]
+  prettier/prettier: ['error', { endOfLine: 'auto' }]
   # We like nested ternaries
   no-nested-ternary: 'off'
   # Conflicting with prettier
@@ -106,7 +107,9 @@ rules:
   # ⭐ JSX-A11Y rules
   jsx-a11y/no-noninteractive-element-interactions: 'off'
   jsx-a11y/click-events-have-key-events: 'off'
+
   jsx-a11y/anchor-is-valid: 'off'
+  linebreak-style: ['error', 'windows']
 
   # ⭐ TypeScript rules
   # We don't like comma-dangle
@@ -115,8 +118,7 @@ rules:
   '@typescript-eslint/indent': 'off'
   # Disabling base rule because reports incorrect errors with TypeScript types
   '@typescript-eslint/no-redeclare': 'error'
-  # We don't like semicolons
-  '@typescript-eslint/semi': 'error'
+  '@typescript-eslint/semi': 'off'
   # Need it to stop if SERVICE is not passed
   '@typescript-eslint/no-throw-literal': 'off'
 

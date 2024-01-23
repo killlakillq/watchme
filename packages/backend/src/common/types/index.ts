@@ -1,4 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import 'express';
+
+declare module 'express' {
+  export interface Request {
+    user: {
+      sub: string;
+      email: string;
+      refreshToken: string;
+    };
+  }
+}
 
 export interface MovieList {
   now_playing: string;
@@ -43,4 +54,10 @@ export interface LogsDto {
   method: string;
   path: string;
   userAgent: string;
+}
+
+export interface EmailMessageOptions {
+  email: string;
+  subject: string;
+  html: string;
 }

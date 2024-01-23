@@ -13,7 +13,7 @@ CREATE TABLE "Movie" (
     "originalLanguage" TEXT NOT NULL,
     "budget" BIGINT NOT NULL,
     "revenue" BIGINT NOT NULL,
-    "reviewId" TEXT NOT NULL,
+    "reviewId" TEXT,
 
     CONSTRAINT "Movie_pkey" PRIMARY KEY ("id")
 );
@@ -47,6 +47,7 @@ CREATE TABLE "User" (
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "resetToken" TEXT,
     "refreshToken" TEXT,
     "reviewId" TEXT,
     "movieId" TEXT,
@@ -68,10 +69,13 @@ CREATE TABLE "Logs" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Movie_reviewId_key" ON "Movie"("reviewId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
-ALTER TABLE "Movie" ADD CONSTRAINT "Movie_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Movie" ADD CONSTRAINT "Movie_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ReviewComment" ADD CONSTRAINT "ReviewComment_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE SET NULL ON UPDATE CASCADE;

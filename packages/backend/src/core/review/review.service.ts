@@ -1,7 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ReviewDto } from './entities/dtos/review.dto';
 import ReviewRepository from '../../infrastructure/database/repositories/review.repository';
 import { ServerResponse } from '../../common/types';
+import { EXCEPTIONS } from '../../common/constants';
 
 @Injectable()
 export class ReviewService {
@@ -10,11 +11,7 @@ export class ReviewService {
   public async createReview(body: ReviewDto): Promise<ServerResponse> {
     const review = await this.reviewRepository.create(body);
     if (!review) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -28,11 +25,7 @@ export class ReviewService {
     const review = await this.reviewRepository.find();
 
     if (!review) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -46,11 +39,7 @@ export class ReviewService {
     const review = await this.reviewRepository.update(id, body);
 
     if (!review) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -64,11 +53,7 @@ export class ReviewService {
     const review = await this.reviewRepository.delete(id);
 
     if (!review) {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-        data: null
-      };
+      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
     }
 
     return {

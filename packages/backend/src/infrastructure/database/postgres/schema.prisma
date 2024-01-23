@@ -52,6 +52,7 @@ model User {
   lastName     String
   email        String  @unique
   password     String
+  resetToken   String?
   refreshToken String?
   review       Review? @relation(fields: [reviewId], references: [id])
   reviewId     String?

@@ -6,6 +6,7 @@ export interface User {
   lastName: string;
   email: string;
   password: string;
+  resetToken: string;
   refreshToken: string;
   reviewId: string;
   movieId: string;
@@ -13,6 +14,8 @@ export interface User {
 
 export interface UserMethods {
   create(data: UserDto): Promise<User>;
-  find(email: string): Promise<User>;
-  updateToken(id: string, token: string): Promise<User>;
+  findUserByEmail(email: string): Promise<User>;
+  findUserById(id: string): Promise<User>;
+  updateRefreshToken(id: string, token: string): Promise<User>;
+  updateResetToken(id: string, token: string): Promise<User>;
 }

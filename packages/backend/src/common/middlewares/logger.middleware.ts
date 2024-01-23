@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
-import { AppLogger } from '../../helpers/logger';
 import { NextFunction, Request, Response } from 'express';
+import { AppLogger } from '../../helpers/logger.helper';
 import LogsRepository from '../../infrastructure/database/repositories/logs.repositories';
 
 @Injectable()

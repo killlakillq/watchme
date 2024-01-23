@@ -1,12 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { ServerResponse } from '../../common/types';
-import {
-  MovieDto,
-  SearchMovieQueriesDto,
-  ShowMovieQueriesDto
-} from '../../core/movie/entities/dtos/movie.dto';
-import { MovieService } from '../../core/movie/movie.service';
-import { JwtAccessGuard } from '../../common/guards/access-token.guard';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -20,13 +12,20 @@ import {
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
+import { ServerResponse } from '../../common/types';
+import {
+  MovieDto,
+  SearchMovieQueriesDto,
+  ShowMovieQueriesDto
+} from '../../core/movie/entities/dtos/movie.dto';
+import { MovieService } from '../../core/movie/movie.service';
+import { JwtAccessGuard } from '../../common/guards/access-token.guard';
 import {
   responseSchema,
   internalServerErrorSchema,
   notFoundSchema,
   unauthorizedSchema
 } from '../../common/documents';
-import { Response } from 'express';
 
 @ApiTags('Movies')
 @Controller('movies')
@@ -49,20 +48,10 @@ export class MovieController {
   @ApiOperation({ summary: 'Show movies' })
   @ApiResponse({ status: 200, ...responseSchema })
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showMovies(
-    @Query() queries: ShowMovieQueriesDto,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.movieService.showMovies(queries);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async showMovies(@Query() queries: ShowMovieQueriesDto): Promise<ServerResponse> {
+    return this.movieService.showMovies(queries);
   }
 
   @Post('/watch-list')
@@ -74,19 +63,8 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Add movie to watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async addMovieToWatchList(
-    @Body() body: MovieDto,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.movieService.addMovieToWatchList(body);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async addMovieToWatchList(@Body() body: MovieDto): Promise<ServerResponse> {
+    return this.movieService.addMovieToWatchList(body);
   }
 
   @Get('/watch-list')
@@ -97,16 +75,8 @@ export class MovieController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showWatchList(@Res({ passthrough: true }) res: Response): Promise<ServerResponse> {
-    const { status, message, data } = await this.movieService.showWatchList();
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async showWatchList(): Promise<ServerResponse> {
+    return this.movieService.showWatchList();
   }
 
   @Delete('/watch-list/:id')
@@ -118,19 +88,8 @@ export class MovieController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteMovieFromWatchList(
-    @Param('id') id: string,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.movieService.deleteMovieFromWatchList(id);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async deleteMovieFromWatchList(@Param('id') id: string): Promise<ServerResponse> {
+    return this.movieService.deleteMovieFromWatchList(id);
   }
 
   @Get('/search')
@@ -165,19 +124,9 @@ export class MovieController {
   @ApiOperation({ summary: 'Search movies' })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async searchMovies(
-    @Query() queries: SearchMovieQueriesDto,
-    @Res({ passthrough: true }) res: Response
-  ): Promise<ServerResponse> {
-    const { status, message, data } = await this.movieService.searchMovies(queries);
-
-    res.status(status);
-
-    return {
-      status,
-      message,
-      data
-    };
+  public async searchMovies(@Query() queries: SearchMovieQueriesDto): Promise<ServerResponse> {
+    return this.movieService.searchMovies(queries);
   }
 }

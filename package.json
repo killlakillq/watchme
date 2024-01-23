@@ -5,10 +5,22 @@
   "scripts": {
     "build": "npx lerna run build",
     "start": "npx lerna run start",
-    "start:dev": "npx lerna run start:dev"
+    "start:dev": "npx lerna run start:dev",
+    "migrate:postgres": "dotenv -e ../../.env -- prisma migrate deploy",
+    "migrate:postgres:dev": "dotenv -e ../../.env -- prisma migrate dev"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "lerna": "^7.4.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.8.1"
   },
   "keywords": [],
   "license": "ISC",

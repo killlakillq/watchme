@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import AuthRepository from '../../infrastructure/database/repositories/auth.repository';
-import { encrypt } from '../../helpers/crypto';
 import { JwtService } from '@nestjs/jwt';
+import AuthRepository from '../../infrastructure/database/repositories/auth.repository';
+import { encrypt } from '../../helpers/crypto.helper';
 import { JWT, REDIS } from '../../common/constants';
 import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
 import { Tokens } from '../../common/types';
@@ -16,7 +16,7 @@ export class TokenService {
 
   public async updateRefreshToken(id: string, token: string): Promise<void> {
     const hashedRefreshToken = await encrypt(token);
-    await this.authRepository.updateToken(id, hashedRefreshToken);
+    await this.authRepository.updateRefreshToken(id, hashedRefreshToken);
   }
 
   public async getTokens(id: string, email: string): Promise<Tokens> {
@@ -24,7 +24,7 @@ export class TokenService {
       sub: id,
       email
     };
-    
+
     const [access, refresh] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: JWT.ACCESS_SECRET,

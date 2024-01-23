@@ -14,7 +14,7 @@ export class AppLogger {
     });
   }
 
-  public error(message: string, meta?: Record<string, any>): Logger {
+  public error(message: string | Error, meta?: Record<string, any>): Logger {
     const timestamp = new Date().toISOString();
 
     return this.logger.error({

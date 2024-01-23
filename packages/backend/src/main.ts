@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './infrastructure/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './infrastructure/app.module';
 import { APP, CORS } from './common/constants';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
@@ -9,8 +9,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix(APP.GLOBAL_PREFIX);
   app.enableCors({
-    origin: [CORS.ORIGIN],
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    origin: CORS.ORIGIN,
+    methods: CORS.METHODS,
     credentials: true
   });
 
@@ -24,7 +24,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 
 bootstrap();
