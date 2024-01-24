@@ -6,7 +6,7 @@ import { MovieModule } from '../core/movie/movie.module';
 import { ReviewModule } from '../core/review/review.module';
 import { LoggerMiddleware } from '../common/middlewares/logger.middleware';
 import { AppLogger } from '../helpers/logger.helper';
-import LogsRepository from './database/repositories/logs.repositories';
+import LogsRepository from './database/repositories/logs.repository';
 import { EmailModule } from '../core/email/email.module';
 import { QueueModule } from '../core/queue/queue.module';
 

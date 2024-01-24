@@ -14,7 +14,7 @@ async function bootstrap() {
     credentials: true
   });
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Watchme')

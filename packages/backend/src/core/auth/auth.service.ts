@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { encrypt, decrypt } from '../../helpers/crypto.helper';
-import AuthRepository from '../../infrastructure/database/repositories/auth.repository';
+import UserRepository from '../../infrastructure/database/repositories/user.repository';
 import { UserDto } from './entities/dtos/auth.dto';
 import { APP, EXCEPTIONS } from '../../common/constants';
 import { TokenService } from './token.service';
@@ -11,27 +11,27 @@ import { ProducerService } from '../queue/producer.service';
 @Injectable()
 export class AuthService {
   public constructor(
-    private readonly authRepository: AuthRepository,
+    private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
     private readonly producerService: ProducerService
   ) {}
 
   public async signUp(body: UserDto): Promise<ServerResponse> {
-    const user = await this.authRepository.findUserByEmail(body.email);
+    const user = await this.userRepository.findUserByEmail(body.email);
     if (user) {
       throw new BadRequestException(EXCEPTIONS.USER_ALREADY_EXISTS);
     }
     const hash = await encrypt(body.password);
 
-    const createdUser = await this.authRepository.create({
+    const createdUser = await this.userRepository.create({
       ...body,
       password: hash
     });
 
     await this.producerService.pushMessageToEmailQueue({
       email: 'mdraginich@gmail.com',
-      subject: `Welcome to our community, ${user.firstName}!`,
-      html: `<p>Hello ${user.firstName},</p>
+      subject: `Welcome to our community, ${user.username}!`,
+      html: `<p>Hello ${user.username},</p>
         <p>Welcome to our community! Your account is now active.</p>
         <p>Enjoy your time with us!</p>`
     });
@@ -42,8 +42,11 @@ export class AuthService {
     return { status: HttpStatus.CREATED, message: 'User was successfully created', data: tokens };
   }
 
-  public async signIn({ email, password }: UserDto): Promise<ServerResponse> {
-    const user = await this.authRepository.findUserByEmail(email);
+  public async signIn({
+    email,
+    password
+  }: Pick<UserDto, 'email' | 'password'>): Promise<ServerResponse> {
+    const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
       throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
     }
@@ -60,7 +63,7 @@ export class AuthService {
   }
 
   public async logout(id: string): Promise<ServerResponse> {
-    await this.authRepository.updateRefreshToken(id, null);
+    await this.userRepository.updateRefreshToken(id, null);
 
     return {
       status: HttpStatus.OK,
@@ -70,7 +73,7 @@ export class AuthService {
   }
 
   public async refreshTokens(email: string, refreshToken: string): Promise<ServerResponse> {
-    const user = await this.authRepository.findUserByEmail(email);
+    const user = await this.userRepository.findUserByEmail(email);
     if (!user || !user.refreshToken) {
       throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
     }
@@ -87,7 +90,7 @@ export class AuthService {
   }
 
   public async forgotPassword(email: string): Promise<ServerResponse> {
-    const user = await this.authRepository.findUserByEmail(email);
+    const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
       throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
     }
@@ -97,7 +100,7 @@ export class AuthService {
 
     const link = `${APP.URL}/${APP.GLOBAL_PREFIX}/password-reset?token=${hashedResetToken}&id=${user.id}`;
 
-    await this.authRepository.updateResetToken(user.id, hashedResetToken);
+    await this.userRepository.updateResetToken(user.id, hashedResetToken);
 
     await this.producerService.pushMessageToEmailQueue({
       email,
@@ -113,7 +116,7 @@ export class AuthService {
   }
 
   public async resetPassword(id: string, token: string): Promise<ServerResponse> {
-    const user = await this.authRepository.findUserById(id);
+    const user = await this.userRepository.findUserById(id);
     if (!user) {
       throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
     }
@@ -125,7 +128,7 @@ export class AuthService {
     }
 
     const password = Math.random().toString(36).slice(-8);
-    await this.authRepository.updatePassword(user.email, password);
+    await this.userRepository.updatePassword(user.email, password);
 
     await this.producerService.pushMessageToEmailQueue({
       email: user.email,

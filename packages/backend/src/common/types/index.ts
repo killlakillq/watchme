@@ -4,9 +4,12 @@ import 'express';
 declare module 'express' {
   export interface Request {
     user: {
-      sub: string;
+      username: string;
+      id: string;
       email: string;
       refreshToken: string;
+      provider: string;
+      picture: string;
     };
   }
 }
@@ -38,7 +41,7 @@ export interface PostgresOptions {
 }
 
 export type JwtPayload = {
-  sub: string;
+  id: string;
   email: string;
 };
 

@@ -2,8 +2,8 @@ import { UserDto } from './dtos/auth.dto';
 
 export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  username: string;
+  picture: string;
   email: string;
   password: string;
   resetToken: string;

@@ -46,7 +46,7 @@ rules:
   # Avoid .ts and .tsx import extensions
   import/extensions: 'off'
   # Avoid extraneous dependencies (devDependencies)
-  import/no-extraneous-dependencies: [error, { devDependencies: true }]
+  import/no-extraneous-dependencies: 'off'
   # Turn on errors for missing imports
   import/no-unresolved: 'off'
   # Warning .tsx import extensions on React
@@ -109,7 +109,7 @@ rules:
   jsx-a11y/click-events-have-key-events: 'off'
 
   jsx-a11y/anchor-is-valid: 'off'
-  linebreak-style: ['error', 'windows']
+  linebreak-style: 'off'
 
   # ⭐ TypeScript rules
   # We don't like comma-dangle

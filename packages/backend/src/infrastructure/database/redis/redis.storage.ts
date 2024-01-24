@@ -14,6 +14,6 @@ export class RedisStorage {
   }
 
   public async get(key: string) {
-    return await this.redis.get(key);
+    return this.redis.get(key);
   }
 }

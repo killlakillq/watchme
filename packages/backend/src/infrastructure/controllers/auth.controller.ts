@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
+import { Body, Controller, Get, Post, Query, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Request, Response } from 'express';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -24,11 +24,16 @@ import {
   forbiddenSchema
 } from '../../common/documents';
 import { AuthService } from '../../core/auth/auth.service';
+import { GoogleGuard } from '../../common/guards/google.guard';
+import { OpenService } from '../../core/auth/open.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  public constructor(private readonly authService: AuthService) {}
+  public constructor(
+    private readonly authService: AuthService,
+    private readonly openService: OpenService
+  ) {}
 
   @Post('/signup')
   @ApiBody({ type: UserDto })
@@ -60,9 +65,9 @@ export class AuthController {
   @ApiOperation({ summary: "Update user's tokens" })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
-    const id = req.user.email;
+    const { email } = req.user;
     const { refreshToken } = req.user;
-    return this.authService.refreshTokens(id, refreshToken);
+    return this.authService.refreshTokens(email, refreshToken);
   }
 
   @Post('/forgot-password')
@@ -93,7 +98,35 @@ export class AuthController {
   @ApiOperation({ summary: 'User logout' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   public async logout(@Req() req: Request): Promise<ServerResponse> {
-    const user = req.user.sub;
-    return this.authService.logout(user);
+    const { id } = req.user;
+    return this.authService.logout(id);
+  }
+
+  @Redirect('/')
+  @Get('google/callback')
+  @UseGuards(GoogleGuard)
+  @ApiCreatedResponse(responseSchema)
+  @ApiOperation({ summary: 'Google auth' })
+  public async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const { user } = req;
+
+    const { status, data, message } = await this.openService.signIn({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      picture: user.picture
+    });
+
+    res.cookie('access_token', data.accessToken, {
+      maxAge: 2592000000,
+      sameSite: true,
+      secure: false
+    });
+
+    return {
+      status,
+      message,
+      data
+    };
   }
 }

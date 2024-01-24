@@ -48,10 +48,10 @@ model ReviewComment {
 
 model User {
   id           String  @id @default(uuid())
-  firstName    String
-  lastName     String
+  picture      String?
+  username     String
   email        String  @unique
-  password     String
+  password     String?
   resetToken   String?
   refreshToken String?
   review       Review? @relation(fields: [reviewId], references: [id])
