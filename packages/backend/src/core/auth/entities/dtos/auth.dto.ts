@@ -1,6 +1,17 @@
 /* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
 
+export class UserDto {
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password?: string;
+}
+
 export class RegisterUserDto {
   @ApiProperty()
   username: string;
@@ -10,6 +21,9 @@ export class RegisterUserDto {
 
   @ApiProperty()
   password?: string;
+
+  @ApiProperty()
+  repeatPassword?: string;
 }
 
 export class LoginUserDto {

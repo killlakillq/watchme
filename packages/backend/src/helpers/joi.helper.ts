@@ -1,3 +1,4 @@
+/* eslint-disable newline-per-chained-call */
 import Joi from 'joi';
 
 export const registerSchema = Joi.object({
@@ -5,7 +6,8 @@ export const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string()
     .pattern(/^[a-zA-Z0-9]{3,30}$/)
-    .required()
+    .required(),
+  repeatPassword: Joi.ref('password')
 });
 
 export const loginSchema = Joi.object({

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 import { AppModule } from './infrastructure/app.module';
 import { APP, CORS } from './common/constants';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -14,6 +15,8 @@ async function bootstrap() {
     credentials: true
   });
 
+  app.use(helmet());
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
@@ -24,7 +27,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3001);
+  await app.listen(APP.PORT);
 }
 
 bootstrap();
