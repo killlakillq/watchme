@@ -1,15 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Redirect,
-  Req,
-  Res,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
   ApiBearerAuth,
@@ -43,7 +32,6 @@ import {
 import { AuthService } from '../../core/auth/auth.service';
 import { GoogleGuard } from '../../common/guards/google.guard';
 import { OpenService } from '../../core/auth/open.service';
-import { loginSchema, registerSchema, validate } from '../../helpers/joi.helper';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -60,27 +48,16 @@ export class AuthController {
   @ApiOperation({ summary: 'Register user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async signUp(@Body() body: RegisterUserDto): Promise<ServerResponse> {
-    const { error } = validate(registerSchema, body);
-    if (error) {
-      throw new BadRequestException(error.message);
-    }
-
     return this.authService.signUp(body);
   }
 
   @Post('/signin')
-  @ApiBody({ type: LoginUserDto })
   @ApiOkResponse(responseSchema)
+  @ApiBody({ type: LoginUserDto })
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Login user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async signIn(@Body() body: LoginUserDto): Promise<ServerResponse> {
-    const { error } = validate(loginSchema, body);
-
-    if (error) {
-      throw new BadRequestException(error.message);
-    }
-
     return this.authService.signIn(body);
   }
 
@@ -89,8 +66,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
-  @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiForbiddenResponse(forbiddenSchema)
+  @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: "Update user's tokens" })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
@@ -99,9 +76,9 @@ export class AuthController {
   }
 
   @Post('/forgot-password')
-  @ApiBody({ type: ForgotPasswordDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiBody({ type: ForgotPasswordDto })
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
@@ -110,10 +87,10 @@ export class AuthController {
   }
 
   @Get('reset-password')
-  @ApiQuery({ type: ResetPasswordQueriesDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiForbiddenResponse(forbiddenSchema)
+  @ApiQuery({ type: ResetPasswordQueriesDto })
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async resetPassword(@Query() queries: ResetPasswordQueriesDto): Promise<ServerResponse> {
@@ -156,7 +133,7 @@ export class AuthController {
     return {
       status,
       message,
-      data
+      data: null
     };
   }
 }

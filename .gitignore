@@ -5,6 +5,9 @@ node_modules
 # env
 .env
 
+.next
+next-env.d.ts
+
 # Logs
 logs
 *.log

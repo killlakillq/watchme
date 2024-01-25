@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+  ValidationPipe
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -33,13 +43,11 @@ export class MovieController {
   public constructor(private readonly movieService: MovieService) {}
 
   @Get()
-  @ApiQuery({
-    type: ShowMovieQueriesDto
-  })
-  @ApiOperation({ summary: 'Show movies' })
-  @ApiResponse({ status: 200, ...responseSchema })
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiQuery({ type: ShowMovieQueriesDto })
+  @ApiOperation({ summary: 'Show movies' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
+  @ApiResponse({ status: 200, ...responseSchema })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async showMovies(@Query() queries: ShowMovieQueriesDto): Promise<ServerResponse> {
     return this.movieService.showMovies(queries);
@@ -54,16 +62,18 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Add movie to watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async addMovieToWatchList(@Body() body: MovieDto): Promise<ServerResponse> {
+  public async addMovieToWatchList(
+    @Body(new ValidationPipe({ transform: true })) body: MovieDto
+  ): Promise<ServerResponse> {
     return this.movieService.addMovieToWatchList(body);
   }
 
   @Get('/watch-list')
-  @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Watch list' })
+  @UseGuards(JwtAccessGuard)
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiOperation({ summary: 'Watch list' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async showWatchList(): Promise<ServerResponse> {
@@ -71,23 +81,23 @@ export class MovieController {
   }
 
   @Delete('/watch-list/:id')
-  @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  @ApiParam({ type: 'string', name: 'id' })
-  @ApiOperation({ summary: 'Delete movie from watch list' })
+  @UseGuards(JwtAccessGuard)
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiParam({ type: 'string', name: 'id' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
+  @ApiOperation({ summary: 'Delete movie from watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async deleteMovieFromWatchList(@Param('id') id: string): Promise<ServerResponse> {
     return this.movieService.deleteMovieFromWatchList(id);
   }
 
   @Get('/search')
-  @ApiQuery({ type: SearchMovieQueriesDto })
-  @ApiOperation({ summary: 'Search movies' })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
+  @ApiQuery({ type: SearchMovieQueriesDto })
+  @ApiOperation({ summary: 'Search movies' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async searchMovies(@Query() queries: SearchMovieQueriesDto): Promise<ServerResponse> {

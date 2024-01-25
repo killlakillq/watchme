@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './infrastructure/app.module';
 import { APP, CORS } from './common/constants';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -18,6 +19,7 @@ async function bootstrap() {
   app.use(helmet());
 
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Watchme')

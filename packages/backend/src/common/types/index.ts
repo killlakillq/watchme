@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
 import 'express';
 
@@ -14,10 +15,13 @@ declare module 'express' {
   }
 }
 
-export interface MovieList {
+export class MovieList {
   now_playing: string;
+
   popular: string;
+
   top_rated: string;
+
   upcoming: string;
 }
 
