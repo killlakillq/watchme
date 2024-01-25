@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import UserRepository from '../../infrastructure/database/repositories/user.repository';
-import { UserDto } from './entities/dtos/auth.dto';
+import { OAuthUserDto } from './entities/dtos/auth.dto';
 import { TokenService } from './token.service';
 import { ServerResponse } from '../../common/types';
 
@@ -11,12 +11,7 @@ export class OpenService {
     private readonly userRepository: UserRepository
   ) {}
 
-  public async signIn({
-    id,
-    email,
-    username,
-    picture
-  }: Omit<UserDto, 'password'>): Promise<ServerResponse> {
+  public async signIn({ id, email, username, picture }: OAuthUserDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
       await this.signUp({
@@ -36,7 +31,7 @@ export class OpenService {
     };
   }
 
-  public async signUp(body: Omit<UserDto, 'password'>): Promise<ServerResponse> {
+  public async signUp(body: OAuthUserDto): Promise<ServerResponse> {
     const { id, email } = await this.userRepository.create(body);
 
     const tokens = await this.tokenService.getTokens(id, email);

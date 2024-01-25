@@ -1,8 +1,19 @@
-import { BadRequestException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { encrypt, decrypt } from '../../helpers/crypto.helper';
 import UserRepository from '../../infrastructure/database/repositories/user.repository';
-import { UserDto } from './entities/dtos/auth.dto';
+import {
+  RegisterUserDto,
+  LoginUserDto,
+  ForgotPasswordDto,
+  ResetPasswordDto
+} from './entities/dtos/auth.dto';
 import { APP, EXCEPTIONS } from '../../common/constants';
 import { TokenService } from './token.service';
 import { ServerResponse } from '../../common/types';
@@ -16,22 +27,24 @@ export class AuthService {
     private readonly producerService: ProducerService
   ) {}
 
-  public async signUp(body: UserDto): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserByEmail(body.email);
+  public async signUp({ email, username, password }: RegisterUserDto): Promise<ServerResponse> {
+    const user = await this.userRepository.findUserByEmail(email);
     if (user) {
       throw new BadRequestException(EXCEPTIONS.USER_ALREADY_EXISTS);
     }
-    const hash = await encrypt(body.password);
+
+    const hash = await encrypt(password);
 
     const createdUser = await this.userRepository.create({
-      ...body,
+      email,
+      username,
       password: hash
     });
 
     await this.producerService.pushMessageToEmailQueue({
       email: 'mdraginich@gmail.com',
-      subject: `Welcome to our community, ${user.username}!`,
-      html: `<p>Hello ${user.username},</p>
+      subject: `Welcome to our community, ${createdUser.username}!`,
+      html: `<p>Hello ${createdUser.username},</p>
         <p>Welcome to our community! Your account is now active.</p>
         <p>Enjoy your time with us!</p>`
     });
@@ -42,13 +55,10 @@ export class AuthService {
     return { status: HttpStatus.CREATED, message: 'User was successfully created', data: tokens };
   }
 
-  public async signIn({
-    email,
-    password
-  }: Pick<UserDto, 'email' | 'password'>): Promise<ServerResponse> {
+  public async signIn({ email, password }: LoginUserDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
-      throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }
 
     const verifyPassword = await decrypt(user.password, password);
@@ -89,10 +99,10 @@ export class AuthService {
     return { status: HttpStatus.OK, message: 'Tokens was successfully updated', data: tokens };
   }
 
-  public async forgotPassword(email: string): Promise<ServerResponse> {
+  public async forgotPassword({ email }: ForgotPasswordDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
-      throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }
     const resetToken = randomBytes(32).toString();
 
@@ -115,10 +125,10 @@ export class AuthService {
     };
   }
 
-  public async resetPassword(id: string, token: string): Promise<ServerResponse> {
+  public async resetPassword({ id, token }: ResetPasswordDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
-      throw new BadRequestException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }
 
     const resetToken = await decrypt(user.resetToken, token);

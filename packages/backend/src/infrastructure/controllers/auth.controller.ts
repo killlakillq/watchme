@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Post, Query, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Redirect,
+  Req,
+  Res,
+  UseGuards
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
   ApiBearerAuth,
@@ -9,10 +20,16 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
-import { UserDto } from '../../core/auth/entities/dtos/auth.dto';
+import {
+  RegisterUserDto,
+  LoginUserDto,
+  ForgotPasswordDto,
+  ResetPasswordDto
+} from '../../core/auth/entities/dtos/auth.dto';
 import { ServerResponse } from '../../common/types';
 import { JwtAccessGuard } from '../../common/guards/access-token.guard';
 import { JwtRefreshGuard } from '../../common/guards/refresh-token.guard';
@@ -26,6 +43,7 @@ import {
 import { AuthService } from '../../core/auth/auth.service';
 import { GoogleGuard } from '../../common/guards/google.guard';
 import { OpenService } from '../../core/auth/open.service';
+import { loginSchema, registerSchema, validate } from '../../helpers/joi.helper';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -36,22 +54,33 @@ export class AuthController {
   ) {}
 
   @Post('/signup')
-  @ApiBody({ type: UserDto })
+  @ApiBody({ type: RegisterUserDto })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Register user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signUp(@Body() body: UserDto): Promise<ServerResponse> {
+  public async signUp(@Body() body: RegisterUserDto): Promise<ServerResponse> {
+    const { error } = validate(registerSchema, body);
+    if (error) {
+      throw new BadRequestException(error.message);
+    }
+
     return this.authService.signUp(body);
   }
 
   @Post('/signin')
-  @ApiBody({ type: UserDto })
+  @ApiBody({ type: LoginUserDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Login user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signIn(@Body() body: UserDto): Promise<ServerResponse> {
+  public async signIn(@Body() body: LoginUserDto): Promise<ServerResponse> {
+    const { error } = validate(loginSchema, body);
+
+    if (error) {
+      throw new BadRequestException(error.message);
+    }
+
     return this.authService.signIn(body);
   }
 
@@ -65,29 +94,30 @@ export class AuthController {
   @ApiOperation({ summary: "Update user's tokens" })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
-    const { email } = req.user;
-    const { refreshToken } = req.user;
+    const { email, refreshToken } = req.user;
     return this.authService.refreshTokens(email, refreshToken);
   }
 
   @Post('/forgot-password')
+  @ApiBody({ type: ForgotPasswordDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async forgotPassword(@Body() email: string): Promise<ServerResponse> {
+  public async forgotPassword(@Body() email: ForgotPasswordDto): Promise<ServerResponse> {
     return this.authService.forgotPassword(email);
   }
 
   @Get('reset-password')
+  @ApiQuery({ type: ResetPasswordDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async resetPassword(@Query() id: string, @Query() token: string): Promise<ServerResponse> {
-    return this.authService.resetPassword(id, token);
+  public async resetPassword(@Query() query: ResetPasswordDto): Promise<ServerResponse> {
+    return this.authService.resetPassword(query);
   }
 
   @Post('/logout')
