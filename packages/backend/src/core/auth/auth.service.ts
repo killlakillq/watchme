@@ -12,7 +12,7 @@ import {
   RegisterUserDto,
   LoginUserDto,
   ForgotPasswordDto,
-  ResetPasswordDto
+  ResetPasswordQueriesDto
 } from './entities/dtos/auth.dto';
 import { APP, EXCEPTIONS } from '../../common/constants';
 import { TokenService } from './token.service';
@@ -125,7 +125,7 @@ export class AuthService {
     };
   }
 
-  public async resetPassword({ id, token }: ResetPasswordDto): Promise<ServerResponse> {
+  public async resetPassword({ id, token }: ResetPasswordQueriesDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserById(id);
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);

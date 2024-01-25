@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
 import { MovieList } from '../../../../common/types';
 
@@ -40,17 +41,35 @@ export class MovieDto {
 }
 
 export class ShowMovieQueriesDto {
+  @ApiProperty()
   lists: MovieList;
+
+  @ApiProperty()
   language: string;
+
+  @ApiProperty()
   page: number;
 }
 
 export class SearchMovieQueriesDto {
+  @ApiProperty()
   title: string;
+
+  @ApiProperty()
   language: string;
+
+  @ApiProperty()
   includeAdult: boolean;
+
+  @ApiProperty()
   primaryReleaseYear: string;
+
+  @ApiProperty()
   page: number;
+
+  @ApiProperty()
   region: string;
+
+  @ApiProperty()
   year: string;
 }

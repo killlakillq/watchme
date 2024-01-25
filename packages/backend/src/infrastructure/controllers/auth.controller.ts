@@ -28,7 +28,7 @@ import {
   RegisterUserDto,
   LoginUserDto,
   ForgotPasswordDto,
-  ResetPasswordDto
+  ResetPasswordQueriesDto
 } from '../../core/auth/entities/dtos/auth.dto';
 import { ServerResponse } from '../../common/types';
 import { JwtAccessGuard } from '../../common/guards/access-token.guard';
@@ -110,14 +110,14 @@ export class AuthController {
   }
 
   @Get('reset-password')
-  @ApiQuery({ type: ResetPasswordDto })
+  @ApiQuery({ type: ResetPasswordQueriesDto })
   @ApiOkResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async resetPassword(@Query() query: ResetPasswordDto): Promise<ServerResponse> {
-    return this.authService.resetPassword(query);
+  public async resetPassword(@Query() queries: ResetPasswordQueriesDto): Promise<ServerResponse> {
+    return this.authService.resetPassword(queries);
   }
 
   @Post('/logout')

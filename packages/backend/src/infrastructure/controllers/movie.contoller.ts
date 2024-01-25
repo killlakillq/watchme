@@ -34,16 +34,7 @@ export class MovieController {
 
   @Get()
   @ApiQuery({
-    name: 'list',
-    type: String
-  })
-  @ApiQuery({
-    name: 'language',
-    type: String
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number
+    type: ShowMovieQueriesDto
   })
   @ApiOperation({ summary: 'Show movies' })
   @ApiResponse({ status: 200, ...responseSchema })
@@ -93,34 +84,7 @@ export class MovieController {
   }
 
   @Get('/search')
-  @ApiQuery({
-    name: 'title',
-    type: String
-  })
-  @ApiQuery({
-    name: 'language',
-    type: String
-  })
-  @ApiQuery({
-    name: 'includeAdult',
-    type: Boolean
-  })
-  @ApiQuery({
-    name: 'primaryReleaseYear',
-    type: String
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number
-  })
-  @ApiQuery({
-    name: 'region',
-    type: String
-  })
-  @ApiQuery({
-    name: 'year',
-    type: String
-  })
+  @ApiQuery({ type: SearchMovieQueriesDto })
   @ApiOperation({ summary: 'Search movies' })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
