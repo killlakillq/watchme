@@ -5,9 +5,8 @@ export interface Review {
   name: string;
   date: Date;
   description: string;
-  rating: string;
-};
-
+  rating: number;
+}
 
 export interface ReviewMethods {
   create(data: ReviewDto): Promise<Review>;
@@ -15,4 +14,3 @@ export interface ReviewMethods {
   update(id: string, data: Review): Promise<Review>;
   delete(id: string): Promise<Review>;
 }
-

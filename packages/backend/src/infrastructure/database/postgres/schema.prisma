@@ -30,7 +30,7 @@ model Review {
   id          String          @id @default(uuid())
   name        String
   description String
-  rating      String
+  rating      Int
   date        DateTime
   commentId   ReviewComment[]
   movieId     Movie[]
