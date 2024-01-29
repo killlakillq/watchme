@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
-import { RABBITMQ_URL } from '../../common/configs';
 import { QUEUES } from '../../common/constants';
 
 @Injectable()
 export class ProducerService {
   private channelWrapper: ChannelWrapper;
 
-  public constructor() {
-    const connection = amqp.connect(RABBITMQ_URL);
+  public constructor(private readonly configService: ConfigService) {
+    const url = this.configService.get('RABBITMQ_URL');
+    const connection = amqp.connect(url);
     this.channelWrapper = connection.createChannel({
       setup: (channel: Channel) => channel.assertQueue(QUEUES.EMAIL_EXCHANGE, { durable: false })
     });

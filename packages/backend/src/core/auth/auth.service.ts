@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { encrypt, decrypt } from '../../helpers/crypto.helper';
 import UserRepository from '../../infrastructure/database/repositories/user.repository';
@@ -24,7 +25,8 @@ export class AuthService {
   public constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
-    private readonly producerService: ProducerService
+    private readonly producerService: ProducerService,
+    private readonly configService: ConfigService
   ) {}
 
   public async signUp({ email, username, password }: RegisterUserDto): Promise<ServerResponse> {
@@ -100,6 +102,8 @@ export class AuthService {
   }
 
   public async forgotPassword({ email }: ForgotPasswordDto): Promise<ServerResponse> {
+    const url = this.configService.get('APP_URL');
+
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
@@ -108,7 +112,7 @@ export class AuthService {
 
     const hashedResetToken = await encrypt(resetToken);
 
-    const link = `${APP.URL}/${APP.GLOBAL_PREFIX}/password-reset?token=${hashedResetToken}&id=${user.id}`;
+    const link = `${url}/${APP.GLOBAL_PREFIX}/password-reset?token=${hashedResetToken}&id=${user.id}`;
 
     await this.userRepository.updateResetToken(user.id, hashedResetToken);
 

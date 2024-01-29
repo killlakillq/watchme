@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import { AuthController } from '../../infrastructure/controllers/auth.controller';
@@ -28,7 +29,8 @@ import { GoogleStrategy } from './strategies/google.strategy';
     GoogleStrategy,
     JwtService,
     ProducerService,
-    OpenService
+    OpenService,
+    ConfigService
   ]
 })
 export class AuthModule {}

@@ -1,4 +1,5 @@
 import { BullModule } from '@nestjs/bull';
+import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,13 +10,14 @@ import { ReviewModule } from '../core/review/review.module';
 import LogsRepository from './database/repositories/logs.repository';
 import { EmailModule } from '../core/email/email.module';
 import { QueueModule } from '../core/queue/queue.module';
-import { REDIS_OPTIONS } from '../common/configs';
 import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
+import { redisConfig } from '../common/configs';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: `${process.cwd()}/../../.env` }),
     BullModule.forRoot({
-      redis: REDIS_OPTIONS
+      redis: redisConfig
     }),
     JwtModule.register({}),
     AuthModule,

@@ -1,17 +1,23 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './infrastructure/app.module';
-import { APP, CORS } from './common/constants';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { APP, CORS } from './common/constants';
 
 async function bootstrap() {
+  const configService = new ConfigService();
+
+  const origin = configService.get('CORS_ORIGIN');
+  const port = configService.get('APP_PORT');
+
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix(APP.GLOBAL_PREFIX);
   app.enableCors({
-    origin: CORS.ORIGIN,
+    origin,
     methods: CORS.METHODS,
     credentials: true
   });
@@ -29,7 +35,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(APP.PORT);
+  await app.listen(port);
 }
 
 bootstrap();

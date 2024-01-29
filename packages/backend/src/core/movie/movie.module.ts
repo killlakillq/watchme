@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -26,7 +27,8 @@ import { MovieProcessor } from './movie.processor';
     MovieDatabaseIntegration,
     RedisStorage,
     JwtService,
-    MovieProcessor
+    MovieProcessor,
+    ConfigService
   ]
 })
 export class MovieModule {}

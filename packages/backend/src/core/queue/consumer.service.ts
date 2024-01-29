@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { ConfirmChannel } from 'amqplib';
-import { RABBITMQ_URL } from '../../common/configs';
 import { QUEUES } from '../../common/constants';
 import { EmailService } from '../email/email.service';
 import { EmailMessageOptions } from '../../common/types';
@@ -12,8 +12,12 @@ export class ConsumerService implements OnModuleInit {
 
   private readonly logger = new Logger(ConsumerService.name);
 
-  public constructor(private readonly emailService: EmailService) {
-    const connection = amqp.connect(RABBITMQ_URL);
+  public constructor(
+    private readonly emailService: EmailService,
+    private readonly configService: ConfigService
+  ) {
+    const url = this.configService.get('RABBITMQ_URL');
+    const connection = amqp.connect(url);
     this.channelWrapper = connection.createChannel();
   }
 
