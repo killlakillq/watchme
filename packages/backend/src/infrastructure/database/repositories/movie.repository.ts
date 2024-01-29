@@ -18,4 +18,12 @@ export default class MovieRepository implements MovieMethods {
   public async find(): Promise<Movie[]> {
     return this.prisma.movie.findMany();
   }
+
+  public async findWatchListById(id: string): Promise<Movie> {
+    return this.prisma.movie.findUnique({
+      where: {
+        id
+      }
+    });
+  }
 }

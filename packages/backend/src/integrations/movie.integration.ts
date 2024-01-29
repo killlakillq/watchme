@@ -41,4 +41,32 @@ export class MovieDatabaseIntegration {
     const data = await body.json();
     return { data, status };
   }
+
+  public async recommendMovies(movieId: number) {
+    const { body, statusCode: status } = await request(
+      `${TMDB.URL}/movie/${movieId}/${TMDB.TYPE.RECOMMENDATIONS}`,
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${TMDB.ACCESS_TOKEN}`
+        }
+      }
+    );
+    const data = await body.json();
+    return { data, status };
+  }
+
+  public async getMovieDetails(movieId: number) {
+    const { body, statusCode: status } = await request(`${TMDB.URL}/movie/${movieId}`, {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${TMDB.ACCESS_TOKEN}`
+      }
+    });
+
+    const data = await body.json();
+    return { data, status };
+  }
 }

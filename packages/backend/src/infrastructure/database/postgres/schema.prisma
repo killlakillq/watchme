@@ -16,7 +16,7 @@ model Movie {
   runtime          Int
   country          String
   authors          String
-  genre            String
+  genres           String[]
   ageRate          Int
   originalLanguage String
   budget           BigInt

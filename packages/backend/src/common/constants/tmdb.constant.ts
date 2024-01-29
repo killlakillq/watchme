@@ -3,6 +3,7 @@ export const TMDB = {
   URL: process.env.TMDB_URL,
   TYPE: {
     MOVIE: 'movie',
-    SIMILAR: 'similar'
+    SIMILAR: 'similar',
+    RECOMMENDATIONS: 'recommendations'
   }
 };

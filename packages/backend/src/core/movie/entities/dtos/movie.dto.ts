@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
-import { IsString, IsDate, IsInt, IsObject, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsDate, IsInt, IsBoolean, IsEnum } from 'class-validator';
 import { MovieList } from '../../../../common/types';
 
 export class MovieDto {
@@ -56,8 +56,8 @@ export class MovieDto {
 
 export class ShowMovieQueriesDto {
   @ApiProperty()
-  @IsObject()
-  @Type(() => MovieList)
+  @IsString()
+  @IsEnum(MovieList)
   lists: MovieList;
 
   @ApiProperty()
@@ -65,8 +65,8 @@ export class ShowMovieQueriesDto {
   language: string;
 
   @ApiProperty()
-  @IsInt()
-  page: number;
+  @IsString()
+  page: string;
 }
 
 export class SearchMovieQueriesDto {

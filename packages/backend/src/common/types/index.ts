@@ -15,16 +15,12 @@ declare module 'express' {
   }
 }
 
-export class MovieList {
-  now_playing: string;
-
-  popular: string;
-
-  top_rated: string;
-
-  upcoming: string;
+export enum MovieList {
+  now_playing = 'now_playing',
+  popular = 'popular',
+  top_rated = 'top_rated',
+  upcoming = 'upcoming'
 }
-
 export class ServerResponse {
   @ApiProperty({ example: '201' })
   status: number;

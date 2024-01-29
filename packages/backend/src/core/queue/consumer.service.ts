@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { ConfirmChannel } from 'amqplib';
 import { RABBITMQ_URL } from '../../common/configs';
-import { RABBITMQ } from '../../common/constants';
+import { QUEUES } from '../../common/constants';
 import { EmailService } from '../email/email.service';
 import { EmailMessageOptions } from '../../common/types';
 
@@ -20,7 +20,7 @@ export class ConsumerService implements OnModuleInit {
   public async onModuleInit() {
     try {
       await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
-        await this.getMessageInEmailQueue(channel, RABBITMQ.EMAIL_EXCHANGE);
+        await this.getMessageInEmailQueue(channel, QUEUES.EMAIL_EXCHANGE);
       });
       this.logger.log('Consumer service started and listening for messages.');
     } catch (err) {

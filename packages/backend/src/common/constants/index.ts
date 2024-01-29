@@ -7,5 +7,5 @@ export { TMDB } from './tmdb.constant';
 export { REDIS } from './redis.constant';
 export { APP, CORS } from './app.constant';
 export { EXCEPTIONS } from './exceptions.constant';
-export { RABBITMQ } from './rabbitmq.constant';
+export { QUEUES } from './queues.constant';
 export { GOOGLE } from './google.constant';

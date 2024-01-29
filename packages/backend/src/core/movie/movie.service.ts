@@ -1,5 +1,7 @@
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 import { ForbiddenException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { EXCEPTIONS, REDIS, TMDB } from '../../common/constants';
+import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '../../common/constants';
 import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
 import { MovieDto, ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
@@ -11,7 +13,8 @@ export class MovieService {
   public constructor(
     private readonly movieRepository: MovieRepository,
     private readonly redisRepository: RedisRepository,
-    private readonly movieDatabaseIntegration: MovieDatabaseIntegration
+    private readonly movieDatabaseIntegration: MovieDatabaseIntegration,
+    @InjectQueue(QUEUES.MOVIE) private readonly recommendationQueue: Queue
   ) {}
 
   public async showMovies(queries: ShowMovieQueriesDto): Promise<ServerResponse> {
@@ -45,7 +48,7 @@ export class MovieService {
     };
   }
 
-  public async showWatchList(): Promise<ServerResponse> {
+  public async showWatchList(id: string): Promise<ServerResponse> {
     const cache = await this.redisRepository.get(TMDB.TYPE.MOVIE);
     if (cache) {
       return {
@@ -55,7 +58,7 @@ export class MovieService {
       };
     }
 
-    const watchList = await this.movieRepository.find();
+    const watchList = await this.movieRepository.findWatchListById(id);
     await this.redisRepository.set('watchlist', JSON.stringify(watchList), REDIS.EXPIRE);
     if (!watchList) {
       throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
@@ -98,5 +101,9 @@ export class MovieService {
       message: 'List of movies were successfully fetched',
       data: movies.data
     };
+  }
+
+  public async recommendMovies(id: number) {
+    await this.recommendationQueue.add('recommendation-task', id);
   }
 }

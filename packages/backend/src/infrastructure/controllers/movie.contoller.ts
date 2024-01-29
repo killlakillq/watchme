@@ -68,16 +68,17 @@ export class MovieController {
     return this.movieService.addMovieToWatchList(body);
   }
 
-  @Get('/watch-list')
+  @Get('/watch-list/:id')
   @ApiBearerAuth()
   @UseGuards(JwtAccessGuard)
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Watch list' })
+  @ApiParam({ type: 'string', name: 'id' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showWatchList(): Promise<ServerResponse> {
-    return this.movieService.showWatchList();
+  public async showWatchList(@Param('id') id: string): Promise<ServerResponse> {
+    return this.movieService.showWatchList(id);
   }
 
   @Delete('/watch-list/:id')
@@ -102,5 +103,10 @@ export class MovieController {
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async searchMovies(@Query() queries: SearchMovieQueriesDto): Promise<ServerResponse> {
     return this.movieService.searchMovies(queries);
+  }
+
+  @Get('/recommendations')
+  public async recommendMovies() {
+    await this.movieService.recommendMovies(1);
   }
 }
