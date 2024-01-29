@@ -46,7 +46,7 @@ export class Movie {
 }
 
 export interface MovieMethods {
-  add(data: MovieDto): Promise<Movie>;
+  create(data: MovieDto): Promise<Movie>;
   delete(id: string): Promise<Movie>;
   find(): Promise<Movie[]>;
 }

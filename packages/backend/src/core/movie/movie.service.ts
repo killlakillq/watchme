@@ -35,7 +35,7 @@ export class MovieService {
   }
 
   public async addMovieToWatchList(body: MovieDto): Promise<ServerResponse> {
-    const movie = await this.movieRepository.add(body);
+    const movie = await this.movieRepository.create(body);
 
     if (!movie) {
       throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);

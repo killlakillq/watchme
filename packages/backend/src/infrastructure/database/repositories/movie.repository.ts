@@ -7,7 +7,7 @@ import { Movie, MovieMethods } from '../../../core/movie/entities/movie.entity';
 export default class MovieRepository implements MovieMethods {
   public constructor(private readonly prisma: PrismaClient) {}
 
-  public async add(data: MovieDto): Promise<Movie> {
+  public async create(data: MovieDto): Promise<Movie> {
     return this.prisma.movie.create({ data });
   }
 
