@@ -34,8 +34,8 @@ export class MovieDto {
   authors: string;
 
   @ApiProperty()
-  @IsString()
-  genre: string;
+  @IsString({ each: true })
+  genres: string[];
 
   @ApiProperty()
   @IsInt()

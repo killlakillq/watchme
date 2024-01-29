@@ -27,7 +27,7 @@ export class Movie {
   authors: string;
 
   @ApiProperty()
-  genre: string;
+  genres: string[];
 
   @ApiProperty()
   ageRate: number;
