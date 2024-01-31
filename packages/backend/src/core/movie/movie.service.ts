@@ -1,9 +1,15 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { ForbiddenException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '../../common/constants';
 import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
-import { MovieDto, ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
+import { ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
 import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
 import { ServerResponse } from '../../common/types';
@@ -34,21 +40,41 @@ export class MovieService {
     };
   }
 
-  public async addMovieToWatchList(body: MovieDto): Promise<ServerResponse> {
-    const movie = await this.movieRepository.create(body);
+  public async addMovieToWatchlist(userId: string, movieId: number): Promise<ServerResponse> {
+    const movie = await this.movieDatabaseIntegration.getMovieDetails(movieId);
+    const foundMovie = await this.movieRepository.findMovieById(movieId);
 
-    if (!movie) {
-      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+    if (foundMovie) {
+      const watchlist = await this.movieRepository.createWatchlist(userId, movieId);
+      if (watchlist.code === 'P2002') {
+        throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_ADDED);
+      }
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Movie was successfully added to watchlist',
+        data: watchlist
+      };
+    }
+
+    const createdMovie = await this.movieRepository.createMovie(movie.data);
+    if (createdMovie.code === 'P2002') {
+      throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_EXISTS);
+    }
+
+    const watchlist = await this.movieRepository.createWatchlist(userId, movieId);
+    if (watchlist.code === 'P2002') {
+      throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_ADDED);
     }
 
     return {
       status: HttpStatus.CREATED,
       message: 'Movie was successfully added to watchlist',
-      data: movie
+      data: watchlist
     };
   }
 
-  public async showWatchList(id: string): Promise<ServerResponse> {
+  public async showWatchlist(userId: string): Promise<ServerResponse> {
     const cache = await this.redisRepository.get(TMDB.TYPE.MOVIE);
     if (cache) {
       return {
@@ -58,20 +84,23 @@ export class MovieService {
       };
     }
 
-    const watchList = await this.movieRepository.findWatchListById(id);
-    await this.redisRepository.set('watchlist', JSON.stringify(watchList), REDIS.EXPIRE);
-    if (!watchList) {
+    const watchlist = await this.movieRepository.findWatchlistById(userId);
+
+    // const movie = await this.movieDatabaseIntegration.getMovieDetails(watchlist);
+
+    await this.redisRepository.set('watchlist', JSON.stringify(watchlist), REDIS.EXPIRE);
+    if (!watchlist) {
       throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
 
     return {
       status: HttpStatus.OK,
       message: 'Watchlist successfully fetched',
-      data: watchList
+      data: watchlist
     };
   }
 
-  public async deleteMovieFromWatchList(id: string): Promise<ServerResponse> {
+  public async deleteMovieFromWatchlist(id: number): Promise<ServerResponse> {
     const deletedMovie = await this.movieRepository.delete(id);
 
     if (!deletedMovie) {
@@ -103,7 +132,8 @@ export class MovieService {
     };
   }
 
-  public async recommendMovies(id: number) {
-    await this.recommendationQueue.add('recommendation-task', id);
+  public async generateRecommendations(userId: string, movieId: string) {
+    await this.movieRepository.findWatchlistById(userId);
+    await this.recommendationQueue.add('recommendation-task', { movieId });
   }
 }

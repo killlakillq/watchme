@@ -7,23 +7,73 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Language {
+  id          Int     @id @default(autoincrement())
+  iso_639_1   String
+  englishName String
+  name        String
+  movie       Movie[]
+}
+
+model Country {
+  id         Int     @id @default(autoincrement())
+  iso_3166_1 String
+  name       String
+  movie      Movie[]
+}
+
+model Company {
+  id            Int     @id @default(autoincrement())
+  logoPath      String?
+  name          String
+  originCountry String
+  movie         Movie[]
+}
+
+model Genre {
+  id    Int     @id @default(autoincrement())
+  name  String
+  movie Movie[]
+}
+
+model Collection {
+  id           Int     @id @default(autoincrement())
+  name         String
+  posterPath   String
+  backdropPath String
+  movie        Movie[]
+}
+
 model Movie {
-  id               String   @id @default(uuid())
-  addedAt          DateTime @default(now())
-  title            String
-  overview         String
-  releaseDate      DateTime
-  runtime          Int
-  country          String
-  authors          String
-  genres           String[]
-  ageRate          Int
-  originalLanguage String
-  budget           BigInt
-  revenue          BigInt
-  review           Review?  @relation(fields: [reviewId], references: [id])
-  reviewId         String?  @unique
-  User             User[]
+  id                  Int         @id @default(autoincrement())
+  imdbId              String?
+  adult               Boolean
+  backdropPath        String
+  belongsToCollection Collection? @relation(fields: [collectionId], references: [id])
+  collectionId        Int?
+  budget              Int
+  genres              Genre[]
+  homepage            String?
+  originalLanguage    String
+  originalTitle       String
+  overview            String
+  popularity          Float
+  posterPath          String?
+  productionCompanies Company[]
+  productionCountries Country[]
+  releaseDate         DateTime
+  revenue             Int
+  runtime             Int
+  spokenLanguages     Language[]
+  status              String
+  tagline             String?
+  title               String
+  video               Boolean
+  voteAverage         Float
+  voteCount           Int
+  review              Review?     @relation(fields: [reviewId], references: [id])
+  reviewId            String?     @unique
+  Watchlist           Watchlist[]
 }
 
 model Review {
@@ -47,17 +97,28 @@ model ReviewComment {
 }
 
 model User {
-  id           String  @id @default(uuid())
+  id           String      @id @default(uuid())
   picture      String?
   username     String
-  email        String  @unique
+  email        String      @unique
   password     String?
   resetToken   String?
   refreshToken String?
-  review       Review? @relation(fields: [reviewId], references: [id])
+  review       Review?     @relation(fields: [reviewId], references: [id])
   reviewId     String?
-  movie        Movie?  @relation(fields: [movieId], references: [id])
   movieId      String?
+  Watchlist    Watchlist[]
+}
+
+model Watchlist {
+  id        String   @id @default(uuid())
+  userId    String
+  movieId   Int
+  watchDate DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  movie     Movie    @relation(fields: [movieId], references: [id])
+
+  @@unique([userId, movieId])
 }
 
 model Logs {

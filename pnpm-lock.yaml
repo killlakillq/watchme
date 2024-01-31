@@ -32,10 +32,6 @@ importers:
       lerna:
         specifier: ^7.4.1
         version: 7.4.1
-    devDependencies:
-      prisma:
-        specifier: ^5.8.1
-        version: 5.8.1
 
   packages/backend:
     dependencies:

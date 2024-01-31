@@ -1,13 +1,69 @@
 /* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsString, IsDate, IsInt, IsBoolean, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsEnum, IsNumber } from 'class-validator';
 import { MovieList } from '../../../../common/types';
+import {
+  Collection,
+  Genre,
+  ProductionCompanies,
+  ProductionCountries,
+  SpokenLanguages
+} from '../../interfaces/movie.type';
 
 export class MovieDto {
   @ApiProperty()
-  @IsDate()
-  addedAt: Date;
+  @IsNumber()
+  id: number;
+
+  @ApiProperty()
+  @IsString()
+  original_title: string;
+
+  @ApiProperty()
+  @IsString()
+  poster_path: string;
+
+  production_companies: ProductionCompanies[];
+
+  spoken_languages: SpokenLanguages[];
+
+  @ApiProperty()
+  @IsString()
+  status: string;
+
+  @ApiProperty()
+  @IsString()
+  tagline: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  video: boolean;
+
+  @ApiProperty()
+  @IsNumber()
+  vote_count: number;
+
+  @ApiProperty()
+  @IsNumber()
+  vote_average: number;
+
+  @ApiProperty()
+  @IsNumber()
+  popularity: number;
+
+  @ApiProperty()
+  @IsString()
+  backdrop_path: string;
+
+  @ApiProperty()
+  @IsString()
+  homepage?: string | null;
+
+  @ApiProperty()
+  @IsString()
+  imdb_id?: string | null;
+
+  belongs_to_collection: Collection;
 
   @ApiProperty()
   @IsString()
@@ -18,40 +74,36 @@ export class MovieDto {
   overview: string;
 
   @ApiProperty()
-  @IsDate()
-  releaseDate: Date;
+  @IsString()
+  release_date: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  adult: boolean;
 
   @ApiProperty()
   @IsInt()
   runtime: number;
 
   @ApiProperty()
-  @IsString()
-  country: string;
+  // @IsString({ each: true })
+  production_countries: ProductionCountries[];
+
+  @ApiProperty()
+  // @IsString({ each: true })
+  genres: Genre[];
 
   @ApiProperty()
   @IsString()
-  authors: string;
+  original_language: string;
 
   @ApiProperty()
-  @IsString({ each: true })
-  genres: string[];
+  @IsNumber()
+  budget: number;
 
   @ApiProperty()
-  @IsInt()
-  ageRate: number;
-
-  @ApiProperty()
-  @IsString()
-  originalLanguage: string;
-
-  @ApiProperty()
-  @Transform((val) => BigInt(val.value))
-  budget: bigint;
-
-  @ApiProperty()
-  @Transform((val) => BigInt(val.value))
-  revenue: bigint;
+  @IsNumber()
+  revenue: number;
 }
 
 export class ShowMovieQueriesDto {
@@ -97,4 +149,14 @@ export class SearchMovieQueriesDto {
   @ApiProperty()
   @IsString()
   year: string;
+}
+
+export class WatchlistDto {
+  @ApiProperty()
+  @IsString()
+  movieId: string;
+
+  @ApiProperty()
+  @IsString()
+  userId: string;
 }

@@ -67,7 +67,7 @@ export class MovieDatabaseIntegration {
     return { data, status };
   }
 
-  public async getMovieDetails(movieId: number) {
+  public async getMovieDetails(movieId: number): Promise<{ data: any; status: any }> {
     const { body, statusCode: status } = await request(`${this.url}/movie/${movieId}`, {
       method: 'GET',
       headers: {

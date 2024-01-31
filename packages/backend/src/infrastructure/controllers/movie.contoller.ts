@@ -1,17 +1,6 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-  ValidationPipe
-} from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -24,7 +13,6 @@ import {
 } from '@nestjs/swagger';
 import { ServerResponse } from '../../common/types';
 import {
-  MovieDto,
   SearchMovieQueriesDto,
   ShowMovieQueriesDto
 } from '../../core/movie/entities/dtos/movie.dto';
@@ -53,22 +41,24 @@ export class MovieController {
     return this.movieService.showMovies(queries);
   }
 
-  @Post('/watch-list')
+  @Post('/watch-list/:userId/:movieId')
   @ApiBearerAuth()
   @UseGuards(JwtAccessGuard)
-  @ApiBody({ type: MovieDto })
+  @ApiParam({ type: 'string', name: 'userId' })
+  @ApiParam({ type: 'number', name: 'movieId' })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Add movie to watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async addMovieToWatchList(
-    @Body(new ValidationPipe({ transform: true })) body: MovieDto
+  public async addMovieToWatchlist(
+    @Param('userId') userId: string,
+    @Param('movieId') movieId: number
   ): Promise<ServerResponse> {
-    return this.movieService.addMovieToWatchList(body);
+    return this.movieService.addMovieToWatchlist(userId, Number(movieId));
   }
 
-  @Get('/watch-list/:id')
+  @Get('/watch-list/:userId')
   @ApiBearerAuth()
   @UseGuards(JwtAccessGuard)
   @ApiCreatedResponse(responseSchema)
@@ -77,8 +67,8 @@ export class MovieController {
   @ApiParam({ type: 'string', name: 'id' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showWatchList(@Param('id') id: string): Promise<ServerResponse> {
-    return this.movieService.showWatchList(id);
+  public async showWatchlist(@Param('userId') userId: string): Promise<ServerResponse> {
+    return this.movieService.showWatchlist(userId);
   }
 
   @Delete('/watch-list/:id')
@@ -90,8 +80,8 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Delete movie from watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteMovieFromWatchList(@Param('id') id: string): Promise<ServerResponse> {
-    return this.movieService.deleteMovieFromWatchList(id);
+  public async deleteMovieFromWatchlist(@Param('id') id: number): Promise<ServerResponse> {
+    return this.movieService.deleteMovieFromWatchlist(id);
   }
 
   @Get('/search')
@@ -107,6 +97,7 @@ export class MovieController {
 
   @Get('/recommendations')
   public async recommendMovies() {
-    await this.movieService.recommendMovies(1);
+    await this.movieService.generateRecommendations('9602cd3d-1d5f-4b71-b531-a4f57199075c', 'asd');
+    return { status: 200, message: 'Recommendations were successfully fetched' };
   }
 }

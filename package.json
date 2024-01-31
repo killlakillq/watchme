@@ -5,10 +5,7 @@
   "scripts": {
     "build": "npx lerna run build",
     "start": "npx lerna run start",
-    "start:dev": "npx lerna run start:dev",
-    "migrate:postgres": "dotenv -e ../../.env -- prisma migrate deploy",
-    "migrate:postgres:dev": "dotenv -e ../../.env -- prisma migrate dev",
-    "client:generate": "dotenv -e ../../.env -- prisma generate"
+    "start:dev": "npx lerna run start:dev"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.19.1",
@@ -20,12 +17,6 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "lerna": "^7.4.1"
   },
-  "devDependencies": {
-    "prisma": "^5.8.1"
-  },
   "keywords": [],
-  "license": "ISC",
-  "prisma": {
-    "schema": "packages/backend/src/infrastructure/database/postgres/schema.prisma"
-  }
+  "license": "ISC"
 }
