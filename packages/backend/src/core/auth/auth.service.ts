@@ -31,6 +31,7 @@ export class AuthService {
 
   public async signUp({ email, username, password }: RegisterUserDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
+
     if (user) {
       throw new BadRequestException(EXCEPTIONS.USER_ALREADY_EXISTS);
     }
@@ -44,7 +45,7 @@ export class AuthService {
     });
 
     await this.producerService.pushMessageToEmailQueue({
-      email: 'mdraginich@gmail.com',
+      email: createdUser.email,
       subject: `Welcome to our community, ${createdUser.username}!`,
       html: `<p>Hello ${createdUser.username},</p>
         <p>Welcome to our community! Your account is now active.</p>
@@ -59,6 +60,7 @@ export class AuthService {
 
   public async signIn({ email, password }: LoginUserDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
+
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }
@@ -86,6 +88,7 @@ export class AuthService {
 
   public async refreshTokens(email: string, refreshToken: string): Promise<ServerResponse> {
     const user = await this.userRepository.findUserByEmail(email);
+
     if (!user || !user.refreshToken) {
       throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
     }
@@ -105,13 +108,13 @@ export class AuthService {
     const url = this.configService.get('APP_URL');
 
     const user = await this.userRepository.findUserByEmail(email);
+
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }
+
     const resetToken = randomBytes(32).toString();
-
     const hashedResetToken = await encrypt(resetToken);
-
     const link = `${url}/${APP.GLOBAL_PREFIX}/password-reset?token=${hashedResetToken}&id=${user.id}`;
 
     await this.userRepository.updateResetToken(user.id, hashedResetToken);
@@ -131,6 +134,7 @@ export class AuthService {
 
   public async resetPassword({ id, token }: ResetPasswordQueriesDto): Promise<ServerResponse> {
     const user = await this.userRepository.findUserById(id);
+
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
     }

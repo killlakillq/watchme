@@ -29,10 +29,10 @@ import { redisConfig } from '../common/configs';
   providers: [
     LogsRepository,
     PrismaClient,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: LoggingInterceptor
-    // }
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor
+    }
   ]
 })
 export class AppModule {}

@@ -25,6 +25,7 @@ export class MovieService {
 
   public async showMovies(queries: ShowMovieQueriesDto): Promise<ServerResponse> {
     const movies = await this.movieDatabaseIntegration.getMovies(queries);
+
     if (movies.status === HttpStatus.NOT_FOUND) {
       throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
@@ -46,6 +47,7 @@ export class MovieService {
 
     if (foundMovie) {
       const watchlist = await this.movieRepository.createWatchlist(userId, movieId);
+
       if (watchlist.code === 'P2002') {
         throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_ADDED);
       }
@@ -58,11 +60,13 @@ export class MovieService {
     }
 
     const createdMovie = await this.movieRepository.createMovie(movie.data);
+
     if (createdMovie.code === 'P2002') {
       throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_EXISTS);
     }
 
     const watchlist = await this.movieRepository.createWatchlist(userId, movieId);
+
     if (watchlist.code === 'P2002') {
       throw new BadRequestException(EXCEPTIONS.MOVIE_ALREADY_ADDED);
     }
@@ -76,26 +80,26 @@ export class MovieService {
 
   public async showWatchlist(userId: string): Promise<ServerResponse> {
     const cache = await this.redisRepository.get(TMDB.TYPE.MOVIE);
+
     if (cache) {
       return {
         status: HttpStatus.OK,
-        message: 'Watchlist successfully fetched',
+        message: 'Watchlist was successfully fetched',
         data: JSON.parse(cache)
       };
     }
 
     const watchlist = await this.movieRepository.findWatchlistById(userId);
 
-    // const movie = await this.movieDatabaseIntegration.getMovieDetails(watchlist);
-
-    await this.redisRepository.set('watchlist', JSON.stringify(watchlist), REDIS.EXPIRE);
     if (!watchlist) {
       throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
     }
 
+    await this.redisRepository.set(REDIS.WATCHLIST, JSON.stringify(watchlist), REDIS.EXPIRE);
+
     return {
       status: HttpStatus.OK,
-      message: 'Watchlist successfully fetched',
+      message: 'Watchlist was successfully fetched',
       data: watchlist
     };
   }

@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, IsBoolean, IsEnum, IsNumber } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsEnum, IsNumber, IsObject } from 'class-validator';
 import { MovieList } from '../../../../common/types';
 import {
   Collection,
@@ -23,8 +23,12 @@ export class MovieDto {
   @IsString()
   poster_path: string;
 
+  @ApiProperty()
+  @IsObject({ each: true })
   production_companies: ProductionCompanies[];
 
+  @ApiProperty()
+  @IsObject({ each: true })
   spoken_languages: SpokenLanguages[];
 
   @ApiProperty()
@@ -63,6 +67,8 @@ export class MovieDto {
   @IsString()
   imdb_id?: string | null;
 
+  @ApiProperty()
+  @IsObject({ each: true })
   belongs_to_collection: Collection;
 
   @ApiProperty()
@@ -86,11 +92,11 @@ export class MovieDto {
   runtime: number;
 
   @ApiProperty()
-  // @IsString({ each: true })
+  @IsObject({ each: true })
   production_countries: ProductionCountries[];
 
   @ApiProperty()
-  // @IsString({ each: true })
+  @IsObject({ each: true })
   genres: Genre[];
 
   @ApiProperty()

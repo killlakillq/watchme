@@ -10,6 +10,7 @@ export class ReviewService {
 
   public async createReview(body: ReviewDto): Promise<ServerResponse> {
     const review = await this.reviewRepository.create(body);
+
     if (!review) {
       throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
     }

@@ -24,7 +24,7 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  // app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
