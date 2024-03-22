@@ -1,6 +1,6 @@
 export class MoviesAPI {
-  public async getMovies() {
-    const response = await fetch('/api/movies');
+  public static async getMovies() {
+    const response = await fetch('https://jsonplaceholder.typicode.com/photos');
     const data = await response.json();
     return data;
   }

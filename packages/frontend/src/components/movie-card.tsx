@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import Image from 'next/image';
 
-const MovieCard: FC = () => (
-  <div className="flex flex-row ml-12">
-    <Input
-      className="bg-zinc-800 border-zinc-700 focus:outline-none pl-10 text-white"
-      type="text"
-      placeholder="Search"
-    />
-    <Button variant="secondary">Search</Button>
+interface MovieCardProps {
+  title: string;
+  date: string;
+  poster: string;
+}
+
+const MovieCard: FC<MovieCardProps> = ({ title, date, poster }) => (
+  <div className="w-40 rounded bg-zinc-700 text-white text-center font-bold mt-5 m-3 shadow-sm">
+    <Image src={poster} alt="logo" width={175} height={345} />
+    <p>{title}</p>
+    <span className="text-xs">{date}</span>
   </div>
 );
 
