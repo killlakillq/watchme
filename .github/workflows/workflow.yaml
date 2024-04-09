@@ -42,11 +42,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm build
       - name: Migrate prisma
         run: pnpm migrate:postgres
       - name: Generate prisma
         run: pnpm client:generate
+      - run: pnpm build
 
   deploy:
     needs: backend
