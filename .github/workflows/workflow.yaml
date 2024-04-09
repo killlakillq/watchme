@@ -2,9 +2,9 @@ name: watchme
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -43,6 +43,10 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm build
+      - name: Migrate prisma
+        run: pnpm migrate:postgres
+      - name: Generate prisma
+        run: pnpm client:generate
 
   deploy:
     needs: backend
