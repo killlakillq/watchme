@@ -2,7 +2,7 @@ import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Watchlist } from '@prisma/client';
 import { QUEUES } from '@common/constants';
-import { MovieDatabaseIntegration } from '@/integrations/movie.integration';
+import { MovieDatabaseIntegration } from '@integrations/movie.integration';
 
 @Processor(QUEUES.MOVIE)
 export class MovieProcessor {

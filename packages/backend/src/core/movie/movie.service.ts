@@ -7,7 +7,7 @@ import RedisRepository from '@infrastructure/database/repositories/redis.reposit
 import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
 import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '@common/constants';
 import { ServerResponse } from '@common/types';
-import { MovieDatabaseIntegration } from '@/integrations/movie.integration';
+import { MovieDatabaseIntegration } from '@integrations/movie.integration';
 
 @Injectable()
 export class MovieService {

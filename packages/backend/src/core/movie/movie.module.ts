@@ -11,7 +11,7 @@ import MovieRepository from '@infrastructure/database/repositories/movie.reposit
 import { RedisStorage } from '@infrastructure/database/redis/redis.storage';
 import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
 import { QUEUES } from '@common/constants';
-import { MovieDatabaseIntegration } from '@/integrations/movie.integration';
+import { MovieDatabaseIntegration } from '@integrations/movie.integration';
 
 @Module({
   imports: [
