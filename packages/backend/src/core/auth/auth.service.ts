@@ -7,18 +7,18 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
-import { encrypt, decrypt } from '../../helpers/crypto.helper';
-import UserRepository from '../../infrastructure/database/repositories/user.repository';
 import {
   RegisterUserDto,
   LoginUserDto,
   ForgotPasswordDto,
   ResetPasswordQueriesDto
-} from './entities/dtos/auth.dto';
-import { APP, EXCEPTIONS } from '../../common/constants';
-import { TokenService } from './token.service';
-import { ServerResponse } from '../../common/types';
-import { ProducerService } from '../queue/producer.service';
+} from '@core/auth/entities/dtos/auth.dto';
+import { TokenService } from '@core/auth/token.service';
+import { ProducerService } from '@core/queue/producer.service';
+import UserRepository from '@infrastructure/database/repositories/user.repository';
+import { encrypt, decrypt } from '@common/helpers/crypto.helper';
+import { APP, EXCEPTIONS } from '@common/constants';
+import { ServerResponse } from '@common/types';
 
 @Injectable()
 export class AuthService {

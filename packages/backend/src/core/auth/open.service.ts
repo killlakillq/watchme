@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import UserRepository from '../../infrastructure/database/repositories/user.repository';
-import { OAuthUserDto } from './entities/dtos/auth.dto';
-import { TokenService } from './token.service';
-import { ServerResponse } from '../../common/types';
+import { OAuthUserDto } from '@core/auth/entities/dtos/auth.dto';
+import { TokenService } from '@core/auth/token.service';
+import UserRepository from '@infrastructure/database/repositories/user.repository';
+import { ServerResponse } from '@common/types';
 
 @Injectable()
 export class OpenService {

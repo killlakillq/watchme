@@ -1,9 +1,9 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { ReviewDto } from './entities/dtos/review.dto';
-import ReviewRepository from '../../infrastructure/database/repositories/review.repository';
-import { ServerResponse } from '../../common/types';
-import { EXCEPTIONS } from '../../common/constants';
-import { ReviewMethods } from './entities/review.entity';
+import { ReviewDto } from '@core/review/entities/dtos/review.dto';
+import { ReviewMethods } from '@core/review/entities/review.entity';
+import ReviewRepository from '@infrastructure/database/repositories/review.repository';
+import { ServerResponse } from '@common/types';
+import { EXCEPTIONS } from '@common/constants';
 
 @Injectable()
 export class ReviewService implements ReviewMethods {

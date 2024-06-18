@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { Observable, catchError, tap } from 'rxjs';
-import LogRepository from '../../infrastructure/database/repositories/log.repository';
+import LogRepository from '@infrastructure/database/repositories/log.repository';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {

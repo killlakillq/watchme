@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Transporter, createTransport } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { nodemailerConfig } from '../../common/configs';
-import { EmailMessageOptions } from '../../common/types';
+import { nodemailerConfig } from '@common/configs';
+import { EmailMessageOptions } from '@common/types';
 
 @Injectable()
 export class EmailService {

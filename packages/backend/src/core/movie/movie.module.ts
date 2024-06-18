@@ -3,14 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
-import { MovieService } from './movie.service';
-import { MovieController } from '../../infrastructure/controllers/movie.controller';
-import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
-import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
-import { RedisStorage } from '../../infrastructure/database/redis/redis.storage';
-import { QUEUES } from '../../common/constants';
-import { MovieProcessor } from './movie.processor';
+import { MovieService } from '@core/movie/movie.service';
+import { MovieProcessor } from '@core/movie/movie.processor';
+import RedisRepository from '@infrastructure/database/repositories/redis.repository';
+import { MovieController } from '@infrastructure/controllers/movie.controller';
+import MovieRepository from '@infrastructure/database/repositories/movie.repository';
+import { RedisStorage } from '@infrastructure/database/redis/redis.storage';
+import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
+import { QUEUES } from '@common/constants';
+import { MovieDatabaseIntegration } from '@/integrations/movie.integration';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { MovieProcessor } from './movie.processor';
     RedisStorage,
     JwtService,
     MovieProcessor,
-    ConfigService
+    ConfigService,
+    WatchlistRepository
   ]
 })
 export class MovieModule {}

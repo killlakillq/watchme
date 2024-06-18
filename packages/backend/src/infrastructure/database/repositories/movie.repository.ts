@@ -1,6 +1,6 @@
 import { Movie, PrismaClient } from '@prisma/client';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { MovieDto } from '../../../core/movie/entities/dtos/movie.dto';
+import { MovieDto } from '@core/movie/entities/dtos/movie.dto';
 
 export interface MovieMethods {
   create(data: MovieDto): Promise<Movie>;

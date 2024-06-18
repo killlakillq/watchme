@@ -1,13 +1,13 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { ForbiddenException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '../../common/constants';
-import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
-import { ShowMovieQueriesDto, SearchMovieQueriesDto } from './entities/dtos/movie.dto';
-import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
-import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
-import { ServerResponse } from '../../common/types';
-import WatchlistRepository from '../../infrastructure/database/repositories/watchlist.repository';
+import { ShowMovieQueriesDto, SearchMovieQueriesDto } from '@core/movie/entities/dtos/movie.dto';
+import MovieRepository from '@infrastructure/database/repositories/movie.repository';
+import RedisRepository from '@infrastructure/database/repositories/redis.repository';
+import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
+import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '@common/constants';
+import { ServerResponse } from '@common/types';
+import { MovieDatabaseIntegration } from '@/integrations/movie.integration';
 
 @Injectable()
 export class MovieService {

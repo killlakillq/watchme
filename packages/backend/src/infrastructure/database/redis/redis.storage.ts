@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { redisConfig } from '../../../common/configs';
+import { redisConfig } from '@common/configs';
 
 export class RedisStorage {
   private redis: Redis;

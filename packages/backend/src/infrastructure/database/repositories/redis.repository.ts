@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisStorage } from '../redis/redis.storage';
+import { RedisStorage } from '@infrastructure/database/redis/redis.storage';
 
 @Injectable()
 export default class RedisRepository {

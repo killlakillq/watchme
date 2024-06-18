@@ -1,4 +1,4 @@
-import { UserDto } from './dtos/auth.dto';
+import { UserDto } from '@core/auth/entities/dtos/auth.dto';
 
 export interface User {
   id: string;

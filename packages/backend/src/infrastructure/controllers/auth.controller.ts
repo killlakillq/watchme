@@ -18,20 +18,20 @@ import {
   LoginUserDto,
   ForgotPasswordDto,
   ResetPasswordQueriesDto
-} from '../../core/auth/entities/dtos/auth.dto';
-import { ServerResponse } from '../../common/types';
-import { JwtAccessGuard } from '../../common/guards/access-token.guard';
-import { JwtRefreshGuard } from '../../common/guards/refresh-token.guard';
+} from '@core/auth/entities/dtos/auth.dto';
+import { AuthService } from '@core/auth/auth.service';
+import { OpenService } from '@core/auth/open.service';
+import { ServerResponse } from '@common/types';
+import { JwtAccessGuard } from '@common/guards/access-token.guard';
+import { JwtRefreshGuard } from '@common/guards/refresh-token.guard';
 import {
   responseSchema,
   notFoundSchema,
   internalServerErrorSchema,
   unauthorizedSchema,
   forbiddenSchema
-} from '../../common/documents';
-import { AuthService } from '../../core/auth/auth.service';
-import { GoogleGuard } from '../../common/guards/google.guard';
-import { OpenService } from '../../core/auth/open.service';
+} from '@common/documents';
+import { GoogleGuard } from '@common/guards/google.guard';
 
 @ApiTags('Auth')
 @Controller('auth')

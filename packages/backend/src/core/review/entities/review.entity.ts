@@ -1,5 +1,5 @@
-import { ServerResponse } from '../../../common/types';
-import { ReviewDto } from './dtos/review.dto';
+import { ReviewDto } from '@core/review/entities/dtos/review.dto';
+import { ServerResponse } from '@common/types';
 
 export interface Review {
   id: string;

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
-import { QUEUES } from '../../common/constants';
+import { QUEUES } from '@common/constants';
 
 @Injectable()
 export class ProducerService {

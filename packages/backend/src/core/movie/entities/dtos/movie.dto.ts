@@ -1,14 +1,14 @@
 /* eslint-disable max-classes-per-file */
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsInt, IsBoolean, IsEnum, IsNumber, IsObject } from 'class-validator';
-import { MovieList } from '../../../../common/types';
 import {
   Collection,
   Genre,
   ProductionCompanies,
   ProductionCountries,
   SpokenLanguages
-} from '../../interfaces/movie.type';
+} from '@core/movie/interfaces/movie.type';
+import { MovieList } from '@common/types';
 
 export class MovieDto {
   @ApiProperty()

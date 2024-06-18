@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { LogsDto } from '../../../common/types';
+import { LogsDto } from '@common/types';
 
 @Injectable()
 export default class LogRepository {

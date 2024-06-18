@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { request } from 'undici';
-import { ShowMovieQueriesDto, SearchMovieQueriesDto } from '../core/movie/entities/dtos/movie.dto';
-import { TMDB } from '../common/constants';
+import { ShowMovieQueriesDto, SearchMovieQueriesDto } from '@core/movie/entities/dtos/movie.dto';
+import { TMDB } from '@common/constants';
 
 @Injectable()
 export class MovieDatabaseIntegration {

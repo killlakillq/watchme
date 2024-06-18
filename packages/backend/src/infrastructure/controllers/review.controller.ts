@@ -10,16 +10,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
-import { ReviewService } from '../../core/review/review.service';
-import { ReviewDto } from '../../core/review/entities/dtos/review.dto';
-import { ServerResponse } from '../../common/types';
-import { JwtAccessGuard } from '../../common/guards/access-token.guard';
+import { ReviewService } from '@core/review/review.service';
+import { ReviewDto } from '@core/review/entities/dtos/review.dto';
+import { ServerResponse } from '@common/types';
+import { JwtAccessGuard } from '@common/guards/access-token.guard';
 import {
   responseSchema,
   notFoundSchema,
   unauthorizedSchema,
   internalServerErrorSchema
-} from '../../common/documents';
+} from '@common/documents';
 
 @ApiTags('Reviews')
 @Controller('reviews')

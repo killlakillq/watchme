@@ -11,19 +11,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
-import { ServerResponse } from '../../common/types';
-import {
-  SearchMovieQueriesDto,
-  ShowMovieQueriesDto
-} from '../../core/movie/entities/dtos/movie.dto';
-import { MovieService } from '../../core/movie/movie.service';
-import { JwtAccessGuard } from '../../common/guards/access-token.guard';
+import { SearchMovieQueriesDto, ShowMovieQueriesDto } from '@core/movie/entities/dtos/movie.dto';
+import { MovieService } from '@core/movie/movie.service';
+import { ServerResponse } from '@common/types';
+import { JwtAccessGuard } from '@common/guards/access-token.guard';
 import {
   responseSchema,
   internalServerErrorSchema,
   notFoundSchema,
   unauthorizedSchema
-} from '../../common/documents';
+} from '@common/documents';
 
 @ApiTags('Movies')
 @Controller('movies')

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ReviewDto } from '../../../core/review/entities/dtos/review.dto';
-import { Review, ReviewMethods } from '../../../core/review/entities/review.entity';
+import { ReviewDto } from '@core/review/entities/dtos/review.dto';
+import { Review, ReviewMethods } from '@core/review/entities/review.entity';
 
 @Injectable()
 export default class ReviewRepository implements ReviewMethods {

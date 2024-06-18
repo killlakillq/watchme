@@ -1,2 +1,2 @@
-export { nodemailerConfig } from './nodemailer.config';
-export { redisConfig } from './redis.config';
+export { nodemailerConfig } from '@common/configs/nodemailer.config';
+export { redisConfig } from '@common/configs/redis.config';

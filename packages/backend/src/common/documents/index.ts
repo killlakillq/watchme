@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ServerResponse } from '../types';
+import { ServerResponse } from '@common/types';
 
 export const internalServerErrorSchema = {
   schema: {
