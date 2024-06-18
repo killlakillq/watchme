@@ -121,6 +121,7 @@ rules:
   '@typescript-eslint/semi': 'off'
   # Need it to stop if SERVICE is not passed
   '@typescript-eslint/no-throw-literal': 'off'
+  '@typescript-eslint/lines-between-class-members': 'off'
 
 # ⭐ Overrides
 overrides:

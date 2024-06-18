@@ -8,60 +8,70 @@ generator client {
 }
 
 model Language {
-  id          Int     @id @default(autoincrement())
-  iso_639_1   String
-  englishName String
+  id          String  @id @default(uuid())
+  iso6391     String  @map("iso_639_1")
+  englishName String  @map("english_name")
   name        String
   movie       Movie[]
+
+  @@map("languages")
 }
 
 model Country {
-  id         Int     @id @default(autoincrement())
-  iso_3166_1 String
-  name       String
-  movie      Movie[]
+  id       String  @id @default(uuid())
+  iso31661 String  @map("iso_3166_1")
+  name     String
+  movie    Movie[]
+
+  @@map("countries")
 }
 
 model Company {
-  id            Int     @id @default(autoincrement())
-  logoPath      String?
+  id            String  @id @default(uuid())
+  logo          String?
   name          String
-  originCountry String
+  originCountry String  @map("origin_country")
   movie         Movie[]
+
+  @@map("companies")
 }
 
 model Genre {
-  id    Int     @id @default(autoincrement())
+  id    String  @id @default(uuid())
   name  String
   movie Movie[]
+
+  @@map("genres")
 }
 
 model Collection {
-  id           Int     @id @default(autoincrement())
-  name         String
-  posterPath   String
-  backdropPath String
-  movie        Movie[]
+  id       String  @id @default(uuid())
+  name     String
+  poster   String
+  backdrop String
+  movie    Movie[]
+
+  @@map("collections")
 }
 
 model Movie {
-  id                  Int         @id @default(autoincrement())
-  imdbId              String?
+  id                  String      @id @default(uuid())
+  imdbId              String?     @map("imdb_id")
   adult               Boolean
-  backdropPath        String
+  backdrop            String
   belongsToCollection Collection? @relation(fields: [collectionId], references: [id])
-  collectionId        Int?
+  collectionId        String?     @map("collection_id")
   budget              Int
   genres              Genre[]
   homepage            String?
-  originalLanguage    String
-  originalTitle       String
+  originalLanguage    String      @map("original_language")
+  originalTitle       String      @map("original_title")
   overview            String
   popularity          Float
-  posterPath          String?
+  poster              String?
   productionCompanies Company[]
   productionCountries Country[]
-  releaseDate         DateTime
+  releaseDate         DateTime    @map("release_date")
   revenue             Int
   runtime             Int
   spokenLanguages     Language[]
@@ -69,11 +79,13 @@ model Movie {
   tagline             String?
   title               String
   video               Boolean
-  voteAverage         Float
-  voteCount           Int
+  voteAverage         Float       @map("vote_average")
+  voteCount           Int         @map("vote_count")
   review              Review?     @relation(fields: [reviewId], references: [id])
-  reviewId            String?     @unique
-  Watchlist           Watchlist[]
+  reviewId            String?     @unique @map("review_id")
+  watchlist           Watchlist[]
+
+  @@map("movies")
 }
 
 model Review {
@@ -82,9 +94,11 @@ model Review {
   description String
   rating      Int
   date        DateTime
-  commentId   ReviewComment[]
-  movieId     Movie[]
-  userId      User[]
+  comment     ReviewComment[]
+  movie       Movie[]
+  user        User[]
+
+  @@map("reviews")
 }
 
 model ReviewComment {
@@ -92,8 +106,10 @@ model ReviewComment {
   name        String
   description String
   date        DateTime
-  Review      Review?  @relation(fields: [reviewId], references: [id])
-  reviewId    String?
+  review      Review?  @relation(fields: [reviewId], references: [id])
+  reviewId    String?  @map("review_id")
+
+  @@map("review_comments")
 }
 
 model User {
@@ -102,31 +118,36 @@ model User {
   username     String
   email        String      @unique
   password     String?
-  resetToken   String?
-  refreshToken String?
+  resetToken   String?     @map("reset_token")
+  refreshToken String?     @map("refresh_token")
   review       Review?     @relation(fields: [reviewId], references: [id])
-  reviewId     String?
-  movieId      String?
-  Watchlist    Watchlist[]
+  reviewId     String?     @map("review_id")
+  movieId      String?     @map("movie_id")
+  watchlist    Watchlist[]
+
+  @@map("users")
 }
 
 model Watchlist {
   id        String   @id @default(uuid())
-  userId    String
-  movieId   Int
-  watchDate DateTime @default(now())
+  userId    String   @map("user_id")
+  movieId   String   @map("movie_id")
+  watchDate DateTime @default(now()) @map("watch_date")
   user      User     @relation(fields: [userId], references: [id])
   movie     Movie    @relation(fields: [movieId], references: [id])
 
   @@unique([userId, movieId])
+  @@map("watchlists")
 }
 
-model Logs {
+model Log {
   id        String @id @default(uuid())
   level     String
   timestamp String
   message   String
   method    String
   path      String
-  userAgent String
+  userAgent String @map("user_agent")
+
+  @@map("logs")
 }

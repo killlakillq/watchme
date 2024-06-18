@@ -21,6 +21,7 @@ export enum MovieList {
   top_rated = 'top_rated',
   upcoming = 'upcoming'
 }
+
 export class ServerResponse {
   @ApiProperty({ example: '201' })
   status: number;

@@ -13,7 +13,7 @@ import {
 export class MovieDto {
   @ApiProperty()
   @IsNumber()
-  id: number;
+  id: string;
 
   @ApiProperty()
   @IsString()

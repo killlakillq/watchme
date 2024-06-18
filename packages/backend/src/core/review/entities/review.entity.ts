@@ -1,3 +1,4 @@
+import { ServerResponse } from '../../../common/types';
 import { ReviewDto } from './dtos/review.dto';
 
 export interface Review {
@@ -9,8 +10,8 @@ export interface Review {
 }
 
 export interface ReviewMethods {
-  create(data: ReviewDto): Promise<Review>;
-  find(): Promise<Review[]>;
-  update(id: string, data: Review): Promise<Review>;
-  delete(id: string): Promise<Review>;
+  create(data: ReviewDto): Promise<Review | ServerResponse>;
+  find(): Promise<Review[] | ServerResponse>;
+  update(id: string, data: Review): Promise<Review | ServerResponse>;
+  delete(id: string): Promise<Review | ServerResponse>;
 }

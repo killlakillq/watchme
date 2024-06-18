@@ -30,7 +30,7 @@ export class AuthService {
   ) {}
 
   public async signUp({ email, username, password }: RegisterUserDto): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
 
     if (user) {
       throw new BadRequestException(EXCEPTIONS.USER_ALREADY_EXISTS);
@@ -59,7 +59,7 @@ export class AuthService {
   }
 
   public async signIn({ email, password }: LoginUserDto): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
@@ -87,7 +87,7 @@ export class AuthService {
   }
 
   public async refreshTokens(email: string, refreshToken: string): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user || !user.refreshToken) {
       throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
@@ -107,7 +107,7 @@ export class AuthService {
   public async forgotPassword({ email }: ForgotPasswordDto): Promise<ServerResponse> {
     const url = this.configService.get('APP_URL');
 
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
@@ -133,7 +133,7 @@ export class AuthService {
   }
 
   public async resetPassword({ id, token }: ResetPasswordQueriesDto): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserById(id);
+    const user = await this.userRepository.findByEmail(id);
 
     if (!user) {
       throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);

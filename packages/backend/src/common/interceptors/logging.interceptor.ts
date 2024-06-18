@@ -1,14 +1,13 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { Observable, catchError, tap } from 'rxjs';
-import LogsRepository from '../../infrastructure/database/repositories/logs.repository';
+import LogRepository from '../../infrastructure/database/repositories/log.repository';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   private readonly timestamp = new Date().toISOString();
-
   private readonly logger = new Logger(this.timestamp);
 
-  public constructor(private readonly logsRepository: LogsRepository) {}
+  public constructor(private readonly logRepository: LogRepository) {}
 
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -31,7 +30,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
         const errorMessage = `Status: ${statusCode}, message: ${message}, path: ${url}, userAgent: ${userAgent}`;
 
-        await this.logsRepository.create({
+        await this.logRepository.create({
           level: 'error',
           timestamp: this.timestamp,
           message,

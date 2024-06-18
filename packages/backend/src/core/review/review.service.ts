@@ -3,13 +3,14 @@ import { ReviewDto } from './entities/dtos/review.dto';
 import ReviewRepository from '../../infrastructure/database/repositories/review.repository';
 import { ServerResponse } from '../../common/types';
 import { EXCEPTIONS } from '../../common/constants';
+import { ReviewMethods } from './entities/review.entity';
 
 @Injectable()
-export class ReviewService {
+export class ReviewService implements ReviewMethods {
   public constructor(private readonly reviewRepository: ReviewRepository) {}
 
-  public async createReview(body: ReviewDto): Promise<ServerResponse> {
-    const review = await this.reviewRepository.create(body);
+  public async create(data: ReviewDto): Promise<ServerResponse> {
+    const review = await this.reviewRepository.create(data);
 
     if (!review) {
       throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
@@ -22,7 +23,7 @@ export class ReviewService {
     };
   }
 
-  public async showReviews(): Promise<ServerResponse> {
+  public async find(): Promise<ServerResponse> {
     const review = await this.reviewRepository.find();
 
     if (!review) {
@@ -36,7 +37,7 @@ export class ReviewService {
     };
   }
 
-  public async updateReview(id: string, body: ReviewDto): Promise<ServerResponse> {
+  public async update(id: string, body: ReviewDto): Promise<ServerResponse> {
     const review = await this.reviewRepository.update(id, body);
 
     if (!review) {
@@ -50,7 +51,7 @@ export class ReviewService {
     };
   }
 
-  public async deleteReview(id: string): Promise<ServerResponse> {
+  public async delete(id: string): Promise<ServerResponse> {
     const review = await this.reviewRepository.delete(id);
 
     if (!review) {

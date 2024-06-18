@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import RedisRepository from '../../infrastructure/database/repositories/redis.repository';
 import { MovieService } from './movie.service';
-import { MovieController } from '../../infrastructure/controllers/movie.contoller';
+import { MovieController } from '../../infrastructure/controllers/movie.controller';
 import MovieRepository from '../../infrastructure/database/repositories/movie.repository';
 import { MovieDatabaseIntegration } from '../../integrations/movie.integration';
 import { RedisStorage } from '../../infrastructure/database/redis/redis.storage';

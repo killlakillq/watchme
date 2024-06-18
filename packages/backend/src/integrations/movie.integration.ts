@@ -7,7 +7,6 @@ import { TMDB } from '../common/constants';
 @Injectable()
 export class MovieDatabaseIntegration {
   private token: string;
-
   private url: string;
 
   public constructor(private readonly configService: ConfigService) {
@@ -67,7 +66,7 @@ export class MovieDatabaseIntegration {
     return { data, status };
   }
 
-  public async getMovieDetails(movieId: number): Promise<{ data: any; status: any }> {
+  public async getMovieDetails(movieId: string): Promise<{ data: any; status: any }> {
     const { body, statusCode: status } = await request(`${this.url}/movie/${movieId}`, {
       method: 'GET',
       headers: {

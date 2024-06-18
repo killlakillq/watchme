@@ -45,7 +45,7 @@ export class MovieController {
   @ApiBearerAuth()
   @UseGuards(JwtAccessGuard)
   @ApiParam({ type: 'string', name: 'userId' })
-  @ApiParam({ type: 'number', name: 'movieId' })
+  @ApiParam({ type: 'string', name: 'movieId' })
   @ApiCreatedResponse(responseSchema)
   @ApiNotFoundResponse(notFoundSchema)
   @ApiUnauthorizedResponse(unauthorizedSchema)
@@ -53,9 +53,9 @@ export class MovieController {
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async addMovieToWatchlist(
     @Param('userId') userId: string,
-    @Param('movieId') movieId: number
+    @Param('movieId') movieId: string
   ): Promise<ServerResponse> {
-    return this.movieService.addMovieToWatchlist(userId, Number(movieId));
+    return this.movieService.addMovieToWatchlist(userId, movieId);
   }
 
   @Get('/watch-list/:userId')
@@ -80,7 +80,7 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Delete movie from watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteMovieFromWatchlist(@Param('id') id: number): Promise<ServerResponse> {
+  public async deleteMovieFromWatchlist(@Param('id') id: string): Promise<ServerResponse> {
     return this.movieService.deleteMovieFromWatchlist(id);
   }
 

@@ -36,7 +36,7 @@ export class ReviewController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async createReview(@Body() body: ReviewDto): Promise<ServerResponse> {
-    return this.reviewService.createReview(body);
+    return this.reviewService.create(body);
   }
 
   @Get()
@@ -45,7 +45,7 @@ export class ReviewController {
   @ApiOperation({ summary: 'Show reviews' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async showReviews(): Promise<ServerResponse> {
-    return this.reviewService.showReviews();
+    return this.reviewService.find();
   }
 
   @Get('/:id')
@@ -72,7 +72,7 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() body: ReviewDto
   ): Promise<ServerResponse> {
-    return this.reviewService.updateReview(id, body);
+    return this.reviewService.update(id, body);
   }
 
   @Delete('/:id')
@@ -85,6 +85,6 @@ export class ReviewController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
   public async deleteReview(@Param('id') id: string): Promise<ServerResponse> {
-    return this.reviewService.deleteReview(id);
+    return this.reviewService.delete(id);
   }
 }

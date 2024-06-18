@@ -1,10 +1,10 @@
 export type Genre = {
-  id: number;
+  id: string;
   name: string;
 };
 
 export type ProductionCompanies = {
-  id: number;
+  id: string;
   logo_path: string;
   name: string;
   origin_country: string;
@@ -22,7 +22,7 @@ export type SpokenLanguages = {
 };
 
 export type Collection = {
-  id: number;
+  id: string;
   name: string;
   poster_path: string;
   backdrop_path: string;

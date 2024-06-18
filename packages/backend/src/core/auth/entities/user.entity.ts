@@ -14,8 +14,8 @@ export interface User {
 
 export interface UserMethods {
   create(data: UserDto): Promise<User>;
-  findUserByEmail(email: string): Promise<User>;
-  findUserById(id: string): Promise<User>;
+  findByEmail(email: string): Promise<User>;
+  findById(id: string): Promise<User>;
   updateRefreshToken(id: string, token: string): Promise<User>;
   updateResetToken(id: string, token: string): Promise<User>;
 }

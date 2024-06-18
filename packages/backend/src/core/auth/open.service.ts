@@ -12,7 +12,7 @@ export class OpenService {
   ) {}
 
   public async signIn({ id, email, username, picture }: OAuthUserDto): Promise<ServerResponse> {
-    const user = await this.userRepository.findUserByEmail(email);
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       await this.signUp({

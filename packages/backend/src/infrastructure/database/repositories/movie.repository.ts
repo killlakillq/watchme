@@ -1,16 +1,18 @@
-import { PrismaClient } from '@prisma/client';
-import { Injectable } from '@nestjs/common';
+import { Movie, PrismaClient } from '@prisma/client';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { MovieDto } from '../../../core/movie/entities/dtos/movie.dto';
 
+export interface MovieMethods {
+  create(data: MovieDto): Promise<Movie>;
+  findById(id: string): Promise<Movie>;
+  delete(id: string): Promise<Movie>;
+}
+
 @Injectable()
-export default class MovieRepository {
+export default class MovieRepository implements MovieMethods {
   public constructor(private readonly prisma: PrismaClient) {}
 
-  public async createWatchlist(userId: string, movieId: number) {
-    return this.prisma.watchlist.create({ data: { userId, movieId } }).catch((error) => error);
-  }
-
-  public async createMovie(data: MovieDto) {
+  public async create(data: MovieDto) {
     return this.prisma.movie
       .create({
         data: {
@@ -26,11 +28,11 @@ export default class MovieRepository {
           budget: data.budget,
           homepage: data.homepage,
           adult: data.adult,
-          backdropPath: data.backdrop_path,
+          backdrop: data.backdrop_path,
           originalLanguage: data.original_language,
           originalTitle: data.original_title,
           popularity: data.popularity,
-          posterPath: data.poster_path,
+          poster: data.poster_path,
           releaseDate: new Date(data.release_date),
           voteAverage: data.vote_average,
           voteCount: data.vote_count,
@@ -64,40 +66,33 @@ export default class MovieRepository {
           },
           productionCountries: {
             create: data.production_countries.map((country) => ({
-              iso_3166_1: country.iso_3166_1,
+              iso31661: country.iso_3166_1,
               name: country.name
             }))
           },
           spokenLanguages: {
             create: data.spoken_languages.map((language) => ({
-              iso_639_1: language.iso_639_1,
+              iso6391: language.iso_639_1,
               englishName: language.english_name,
               name: language.name
             }))
           }
         }
       })
-      .catch((error) => error);
+      .catch((error) => {
+        throw new BadRequestException(error.message);
+      });
   }
 
-  public async delete(id: number) {
-    return this.prisma.movie.delete({ where: { id } });
-  }
-
-  public async findMovieById(id: number) {
-    return this.prisma.movie.findUnique({ where: { id } });
-  }
-
-  public async findWatchlistById(userId: string) {
-    const watchlist = await this.prisma.watchlist.findMany({
-      where: {
-        userId
-      },
-      include: {
-        movie: true
-      }
+  public async findById(id: string) {
+    return this.prisma.movie.findUnique({ where: { id } }).catch((error) => {
+      throw new BadRequestException(error.message);
     });
+  }
 
-    return watchlist.map((entry) => entry.movie);
+  public async delete(id: string) {
+    return this.prisma.movie.delete({ where: { id } }).catch((error) => {
+      throw new BadRequestException(error.message);
+    });
   }
 }
