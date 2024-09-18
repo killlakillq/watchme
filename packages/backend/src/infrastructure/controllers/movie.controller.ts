@@ -13,7 +13,6 @@ import {
 } from '@nestjs/swagger';
 import { SearchMovieQueriesDto, ShowMovieQueriesDto } from '@core/movie/entities/dtos/movie.dto';
 import { MovieService } from '@core/movie/movie.service';
-import { ServerResponse } from '@common/types';
 import { JwtAccessGuard } from '@common/guards/access-token.guard';
 import {
   responseSchema,
@@ -34,7 +33,7 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiResponse({ status: 200, ...responseSchema })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showMovies(@Query() queries: ShowMovieQueriesDto): Promise<ServerResponse> {
+  public async showMovies(@Query() queries: ShowMovieQueriesDto) {
     return this.movieService.showMovies(queries);
   }
 
@@ -51,7 +50,7 @@ export class MovieController {
   public async addMovieToWatchlist(
     @Param('userId') userId: string,
     @Param('movieId') movieId: string
-  ): Promise<ServerResponse> {
+  ) {
     return this.movieService.addMovieToWatchlist(userId, movieId);
   }
 
@@ -64,7 +63,7 @@ export class MovieController {
   @ApiParam({ type: 'string', name: 'id' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showWatchlist(@Param('userId') userId: string): Promise<ServerResponse> {
+  public async showWatchlist(@Param('userId') userId: string) {
     return this.movieService.showWatchlist(userId);
   }
 
@@ -77,7 +76,7 @@ export class MovieController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: 'Delete movie from watch list' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteMovieFromWatchlist(@Param('id') id: string): Promise<ServerResponse> {
+  public async deleteMovieFromWatchlist(@Param('id') id: string) {
     return this.movieService.deleteMovieFromWatchlist(id);
   }
 
@@ -88,7 +87,7 @@ export class MovieController {
   @ApiOperation({ summary: 'Search movies' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async searchMovies(@Query() queries: SearchMovieQueriesDto): Promise<ServerResponse> {
+  public async searchMovies(@Query() queries: SearchMovieQueriesDto) {
     return this.movieService.searchMovies(queries);
   }
 

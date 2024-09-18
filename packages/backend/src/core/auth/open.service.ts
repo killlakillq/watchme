@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { OAuthUserDto } from '@core/auth/entities/dtos/auth.dto';
 import { TokenService } from '@core/auth/token.service';
 import UserRepository from '@infrastructure/database/repositories/user.repository';
-import { ServerResponse } from '@common/types';
 
 @Injectable()
 export class OpenService {
@@ -11,7 +10,7 @@ export class OpenService {
     private readonly userRepository: UserRepository
   ) {}
 
-  public async signIn({ id, email, username, picture }: OAuthUserDto): Promise<ServerResponse> {
+  public async signIn({ id, email, username, picture }: OAuthUserDto) {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
@@ -32,7 +31,7 @@ export class OpenService {
     };
   }
 
-  public async signUp(body: OAuthUserDto): Promise<ServerResponse> {
+  public async signUp(body: OAuthUserDto) {
     const { id, email } = await this.userRepository.create(body);
 
     const tokens = await this.tokenService.getTokens(id, email);

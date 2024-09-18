@@ -83,7 +83,8 @@ model Movie {
   voteCount           Int         @map("vote_count")
   review              Review?     @relation(fields: [reviewId], references: [id])
   reviewId            String?     @unique @map("review_id")
-  watchlist           Watchlist[]
+
+  watchlists MoviesOnWatchlists[]
 
   @@map("movies")
 }
@@ -113,30 +114,28 @@ model ReviewComment {
 }
 
 model User {
-  id           String      @id @default(uuid())
+  id           String  @id @default(uuid())
   picture      String?
   username     String
-  email        String      @unique
+  email        String  @unique
   password     String?
-  resetToken   String?     @map("reset_token")
-  refreshToken String?     @map("refresh_token")
-  review       Review?     @relation(fields: [reviewId], references: [id])
-  reviewId     String?     @map("review_id")
-  movieId      String?     @map("movie_id")
-  watchlist    Watchlist[]
+  resetToken   String? @map("reset_token")
+  refreshToken String? @map("refresh_token")
+  review       Review? @relation(fields: [reviewId], references: [id])
+  reviewId     String? @map("review_id")
+
+  watchlist   Watchlist? @relation(fields: [watchlistId], references: [id])
+  watchlistId String?    @map("watchlist_id")
 
   @@map("users")
 }
 
 model Watchlist {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  movieId   String   @map("movie_id")
-  watchDate DateTime @default(now()) @map("watch_date")
-  user      User     @relation(fields: [userId], references: [id])
-  movie     Movie    @relation(fields: [movieId], references: [id])
+  id        String               @id @default(uuid())
+  watchDate DateTime             @default(now()) @map("watch_date")
+  movies    MoviesOnWatchlists[]
+  users     User[]
 
-  @@unique([userId, movieId])
   @@map("watchlists")
 }
 
@@ -150,4 +149,13 @@ model Log {
   userAgent String @map("user_agent")
 
   @@map("logs")
+}
+
+model MoviesOnWatchlists {
+  movie       Movie     @relation(fields: [movieId], references: [id])
+  movieId     String    @map("movie_id")
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id])
+  watchlistId String    @map("watchlist_id")
+
+  @@id([movieId, watchlistId])
 }

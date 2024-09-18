@@ -11,25 +11,24 @@ export default class WatchlistRepository implements WatchlistMethods {
   public constructor(private readonly prisma: PrismaClient) {}
 
   public async create(userId: string, movieId: string) {
-    return this.prisma.watchlist.create({ data: { userId, movieId } }).catch((error) => {
-      throw new BadRequestException(error.message);
-    });
+    return this.prisma.watchlist
+      .create({
+        data: {}
+      })
+      .catch((error) => {
+        throw new BadRequestException(error.message);
+      });
   }
 
-  public async findById(userId: string) {
-    const watchlist = await this.prisma.watchlist
-      .findMany({
+  public async findById(id: string) {
+    return this.prisma.watchlist
+      .findUnique({
         where: {
-          userId
-        },
-        include: {
-          movie: true
+          id
         }
       })
       .catch((error) => {
         throw new BadRequestException(error.message);
       });
-
-    return watchlist.map((entry) => entry.movie);
   }
 }

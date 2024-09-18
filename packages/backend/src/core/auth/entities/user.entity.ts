@@ -1,16 +1,5 @@
 import { UserDto } from '@core/auth/entities/dtos/auth.dto';
-
-export interface User {
-  id: string;
-  username: string;
-  picture: string;
-  email: string;
-  password: string;
-  resetToken: string;
-  refreshToken: string;
-  reviewId: string;
-  movieId: string;
-}
+import { User } from '@prisma/client';
 
 export interface UserMethods {
   create(data: UserDto): Promise<User>;

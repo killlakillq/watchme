@@ -5,9 +5,11 @@ import { ShowMovieQueriesDto, SearchMovieQueriesDto } from '@core/movie/entities
 import MovieRepository from '@infrastructure/database/repositories/movie.repository';
 import RedisRepository from '@infrastructure/database/repositories/redis.repository';
 import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
-import { EXCEPTIONS, QUEUES, REDIS, TMDB } from '@common/constants';
+import { EXCEPTION, QUEUES, REDIS, TMDB } from '@common/constants';
 import { ServerResponse } from '@common/types';
 import { MovieDatabaseIntegration } from '@integrations/movie.integration';
+import { Watchlist } from '@prisma/client';
+import UserRepository from '@/infrastructure/database/repositories/user.repository';
 
 @Injectable()
 export class MovieService {
@@ -16,18 +18,19 @@ export class MovieService {
     private readonly watchlistRepository: WatchlistRepository,
     private readonly redisRepository: RedisRepository,
     private readonly movieDatabaseIntegration: MovieDatabaseIntegration,
+    private readonly userRepository: UserRepository,
     @InjectQueue(QUEUES.MOVIE) private readonly recommendationQueue: Queue
   ) {}
 
-  public async showMovies(queries: ShowMovieQueriesDto): Promise<ServerResponse> {
+  public async showMovies(queries: ShowMovieQueriesDto): Promise<ServerResponse<unknown>> {
     const movies = await this.movieDatabaseIntegration.getMovies(queries);
 
     if (movies.status === HttpStatus.NOT_FOUND) {
-      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.MOVIES_NOT_FOUND);
     }
 
     if (movies.status === HttpStatus.UNAUTHORIZED) {
-      throw new ForbiddenException(EXCEPTIONS.UNAUTHORIZED);
+      throw new ForbiddenException(EXCEPTION.UNAUTHORIZED);
     }
 
     return {
@@ -37,7 +40,10 @@ export class MovieService {
     };
   }
 
-  public async addMovieToWatchlist(userId: string, movieId: string): Promise<ServerResponse> {
+  public async addMovieToWatchlist(
+    userId: string,
+    movieId: string
+  ): Promise<ServerResponse<Watchlist>> {
     const movie = await this.movieDatabaseIntegration.getMovieDetails(movieId);
     const foundMovie = await this.movieRepository.findById(movieId);
 
@@ -62,7 +68,7 @@ export class MovieService {
     };
   }
 
-  public async showWatchlist(userId: string): Promise<ServerResponse> {
+  public async showWatchlist(userId: string) {
     const cache = await this.redisRepository.get(TMDB.TYPE.MOVIE);
 
     if (cache) {
@@ -76,23 +82,19 @@ export class MovieService {
     const watchlist = await this.watchlistRepository.findById(userId);
 
     if (!watchlist) {
-      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.MOVIES_NOT_FOUND);
     }
 
     await this.redisRepository.set(REDIS.WATCHLIST, JSON.stringify(watchlist), REDIS.EXPIRE);
 
-    return {
-      status: HttpStatus.OK,
-      message: 'Watchlist was successfully fetched',
-      data: watchlist
-    };
+    return watchlist;
   }
 
-  public async deleteMovieFromWatchlist(id: string): Promise<ServerResponse> {
+  public async deleteMovieFromWatchlist(id: string): Promise<ServerResponse<string>> {
     const deletedMovie = await this.movieRepository.delete(id);
 
     if (!deletedMovie) {
-      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.MOVIES_NOT_FOUND);
     }
 
     return {
@@ -102,15 +104,15 @@ export class MovieService {
     };
   }
 
-  public async searchMovies(queries: SearchMovieQueriesDto): Promise<ServerResponse> {
+  public async searchMovies(queries: SearchMovieQueriesDto): Promise<ServerResponse<unknown>> {
     const movies = await this.movieDatabaseIntegration.searchMovies(queries);
 
     if (movies.status === HttpStatus.NOT_FOUND) {
-      throw new NotFoundException(EXCEPTIONS.MOVIES_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.MOVIES_NOT_FOUND);
     }
 
     if (movies.status === HttpStatus.UNAUTHORIZED) {
-      throw new ForbiddenException(EXCEPTIONS.UNAUTHORIZED);
+      throw new ForbiddenException(EXCEPTION.UNAUTHORIZED);
     }
 
     return {
@@ -120,8 +122,28 @@ export class MovieService {
     };
   }
 
-  public async generateRecommendations(userId: string, movieId: string) {
-    await this.watchlistRepository.findById(userId);
-    await this.recommendationQueue.add('recommendation-task', { movieId });
+  public async generateRecommendations(userId: string, movieId: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(EXCEPTION.USER_NOT_FOUND);
+    }
+
+    const watchlist = await this.watchlistRepository.findById(user.watchlistId);
+
+    if (!watchlist) {
+      throw new NotFoundException(EXCEPTION.WATCHLIST_NOT_FOUND);
+    }
+
+    const movie = await this.movieRepository.findById(movieId);
+
+    if (!movie) {
+      throw new NotFoundException(EXCEPTION.MOVIES_NOT_FOUND);
+    }
+
+    await this.recommendationQueue.add('recommendation-task', {
+      movieId: movie.id,
+      watchlistId: watchlist.id
+    });
   }
 }

@@ -12,6 +12,7 @@ import { RedisStorage } from '@infrastructure/database/redis/redis.storage';
 import WatchlistRepository from '@infrastructure/database/repositories/watchlist.repository';
 import { QUEUES } from '@common/constants';
 import { MovieDatabaseIntegration } from '@integrations/movie.integration';
+import UserRepository from '@/infrastructure/database/repositories/user.repository';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { MovieDatabaseIntegration } from '@integrations/movie.integration';
     JwtService,
     MovieProcessor,
     ConfigService,
-    WatchlistRepository
+    WatchlistRepository,
+    UserRepository
   ]
 })
 export class MovieModule {}

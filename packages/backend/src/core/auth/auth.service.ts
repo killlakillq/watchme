@@ -17,8 +17,7 @@ import { TokenService } from '@core/auth/token.service';
 import { ProducerService } from '@core/queue/producer.service';
 import UserRepository from '@infrastructure/database/repositories/user.repository';
 import { encrypt, decrypt } from '@common/helpers/crypto.helper';
-import { APP, EXCEPTIONS } from '@common/constants';
-import { ServerResponse } from '@common/types';
+import { APP, EXCEPTION } from '@common/constants';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +28,11 @@ export class AuthService {
     private readonly configService: ConfigService
   ) {}
 
-  public async signUp({ email, username, password }: RegisterUserDto): Promise<ServerResponse> {
+  public async signUp({ email, username, password }: RegisterUserDto) {
     const user = await this.userRepository.findByEmail(email);
 
     if (user) {
-      throw new BadRequestException(EXCEPTIONS.USER_ALREADY_EXISTS);
+      throw new BadRequestException(EXCEPTION.USER_ALREADY_EXISTS);
     }
 
     const hash = await encrypt(password);
@@ -58,17 +57,17 @@ export class AuthService {
     return { status: HttpStatus.CREATED, message: 'User was successfully created', data: tokens };
   }
 
-  public async signIn({ email, password }: LoginUserDto): Promise<ServerResponse> {
+  public async signIn({ email, password }: LoginUserDto) {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.USER_NOT_FOUND);
     }
 
     const verifyPassword = await decrypt(user.password, password);
 
     if (verifyPassword) {
-      throw new BadRequestException(EXCEPTIONS.PASSWORD_INCORRECT);
+      throw new BadRequestException(EXCEPTION.PASSWORD_INCORRECT);
     }
 
     const tokens = await this.tokenService.getTokens(user.id, user.email);
@@ -76,7 +75,7 @@ export class AuthService {
     return { status: HttpStatus.OK, message: 'User was successfully logged', data: tokens };
   }
 
-  public async logout(id: string): Promise<ServerResponse> {
+  public async logout(id: string) {
     await this.userRepository.updateRefreshToken(id, null);
 
     return {
@@ -86,17 +85,17 @@ export class AuthService {
     };
   }
 
-  public async refreshTokens(email: string, refreshToken: string): Promise<ServerResponse> {
+  public async refreshTokens(email: string, refreshToken: string) {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user || !user.refreshToken) {
-      throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
+      throw new ForbiddenException(EXCEPTION.ACCESS_DENIED);
     }
 
     const refreshTokenMatches = decrypt(user.refreshToken, refreshToken);
 
     if (!refreshTokenMatches) {
-      throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
+      throw new ForbiddenException(EXCEPTION.ACCESS_DENIED);
     }
 
     const tokens = await this.tokenService.getTokens(user.id, user.email);
@@ -104,13 +103,13 @@ export class AuthService {
     return { status: HttpStatus.OK, message: 'Tokens was successfully updated', data: tokens };
   }
 
-  public async forgotPassword({ email }: ForgotPasswordDto): Promise<ServerResponse> {
+  public async forgotPassword({ email }: ForgotPasswordDto) {
     const url = this.configService.get('APP_URL');
 
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.USER_NOT_FOUND);
     }
 
     const resetToken = randomBytes(32).toString();
@@ -132,17 +131,17 @@ export class AuthService {
     };
   }
 
-  public async resetPassword({ id, token }: ResetPasswordQueriesDto): Promise<ServerResponse> {
+  public async resetPassword({ id, token }: ResetPasswordQueriesDto) {
     const user = await this.userRepository.findByEmail(id);
 
     if (!user) {
-      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.USER_NOT_FOUND);
     }
 
     const resetToken = await decrypt(user.resetToken, token);
 
     if (!resetToken) {
-      throw new ForbiddenException(EXCEPTIONS.ACCESS_DENIED);
+      throw new ForbiddenException(EXCEPTION.ACCESS_DENIED);
     }
 
     const password = Math.random().toString(36).slice(-8);

@@ -10,8 +10,8 @@ export interface Review {
 }
 
 export interface ReviewMethods {
-  create(data: ReviewDto): Promise<Review | ServerResponse>;
-  find(): Promise<Review[] | ServerResponse>;
-  update(id: string, data: Review): Promise<Review | ServerResponse>;
-  delete(id: string): Promise<Review | ServerResponse>;
+  create(data: ReviewDto): Promise<Review | ServerResponse<Review>>;
+  find(): Promise<Review[] | ServerResponse<Review[]>>;
+  update(id: string, data: Review): Promise<Review | ServerResponse<Review>>;
+  delete(id: string): Promise<Review | ServerResponse<Review>>;
 }

@@ -25,6 +25,16 @@ services:
       - 6379:6379
     networks:
       - backend
+  rabbitmq:
+    image: 'rabbitmq:latest'
+    restart: always
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    ports:
+      - 15672:15672
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge

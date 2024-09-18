@@ -21,7 +21,6 @@ import {
 } from '@core/auth/entities/dtos/auth.dto';
 import { AuthService } from '@core/auth/auth.service';
 import { OpenService } from '@core/auth/open.service';
-import { ServerResponse } from '@common/types';
 import { JwtAccessGuard } from '@common/guards/access-token.guard';
 import { JwtRefreshGuard } from '@common/guards/refresh-token.guard';
 import {
@@ -47,7 +46,7 @@ export class AuthController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Register user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signUp(@Body() body: RegisterUserDto): Promise<ServerResponse> {
+  public async signUp(@Body() body: RegisterUserDto) {
     return this.authService.signUp(body);
   }
 
@@ -57,7 +56,7 @@ export class AuthController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Login user' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async signIn(@Body() body: LoginUserDto): Promise<ServerResponse> {
+  public async signIn(@Body() body: LoginUserDto) {
     return this.authService.signIn(body);
   }
 
@@ -70,7 +69,7 @@ export class AuthController {
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiOperation({ summary: "Update user's tokens" })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async updateTokens(@Req() req: Request): Promise<ServerResponse> {
+  public async updateTokens(@Req() req: Request) {
     const { email, refreshToken } = req.user;
     return this.authService.refreshTokens(email, refreshToken);
   }
@@ -82,7 +81,7 @@ export class AuthController {
   @ApiForbiddenResponse(forbiddenSchema)
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async forgotPassword(@Body() email: ForgotPasswordDto): Promise<ServerResponse> {
+  public async forgotPassword(@Body() email: ForgotPasswordDto) {
     return this.authService.forgotPassword(email);
   }
 
@@ -93,7 +92,7 @@ export class AuthController {
   @ApiQuery({ type: ResetPasswordQueriesDto })
   @ApiOperation({ summary: 'Request reset password' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async resetPassword(@Query() queries: ResetPasswordQueriesDto): Promise<ServerResponse> {
+  public async resetPassword(@Query() queries: ResetPasswordQueriesDto) {
     return this.authService.resetPassword(queries);
   }
 
@@ -104,7 +103,7 @@ export class AuthController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'User logout' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
-  public async logout(@Req() req: Request): Promise<ServerResponse> {
+  public async logout(@Req() req: Request) {
     const { id } = req.user;
     return this.authService.logout(id);
   }

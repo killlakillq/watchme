@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User, UserMethods } from '@core/auth/entities/user.entity';
+import { UserMethods } from '@core/auth/entities/user.entity';
 import { UserDto } from '@core/auth/entities/dtos/auth.dto';
 
 @Injectable()

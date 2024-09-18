@@ -22,7 +22,7 @@ export enum MovieList {
   upcoming = 'upcoming'
 }
 
-export class ServerResponse {
+export class ServerResponse<T> {
   @ApiProperty({ example: '201' })
   status: number;
 
@@ -30,7 +30,7 @@ export class ServerResponse {
   message: string;
 
   @ApiProperty({ example: { id: 1, title: 'title', description: 'description' } })
-  data: any;
+  data: T;
 }
 
 export interface PostgresOptions {

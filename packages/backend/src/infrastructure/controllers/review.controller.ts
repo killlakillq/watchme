@@ -12,7 +12,6 @@ import {
 } from '@nestjs/swagger';
 import { ReviewService } from '@core/review/review.service';
 import { ReviewDto } from '@core/review/entities/dtos/review.dto';
-import { ServerResponse } from '@common/types';
 import { JwtAccessGuard } from '@common/guards/access-token.guard';
 import {
   responseSchema,
@@ -35,7 +34,7 @@ export class ReviewController {
   @ApiOperation({ summary: 'Create review' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async createReview(@Body() body: ReviewDto): Promise<ServerResponse> {
+  public async createReview(@Body() body: ReviewDto) {
     return this.reviewService.create(body);
   }
 
@@ -44,7 +43,7 @@ export class ReviewController {
   @ApiNotFoundResponse(notFoundSchema)
   @ApiOperation({ summary: 'Show reviews' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async showReviews(): Promise<ServerResponse> {
+  public async showReviews() {
     return this.reviewService.find();
   }
 
@@ -54,7 +53,7 @@ export class ReviewController {
   @ApiParam({ type: 'string', name: 'id' })
   @ApiOperation({ summary: 'Show review' })
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async getReviewComment(@Param('id') id: string): Promise<ServerResponse> {
+  public async getReviewComment(@Param('id') id: string) {
     return this.reviewService.getReviewComment(id);
   }
 
@@ -68,10 +67,7 @@ export class ReviewController {
   @ApiOperation({ summary: 'Update review' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async updateReview(
-    @Param('id') id: string,
-    @Body() body: ReviewDto
-  ): Promise<ServerResponse> {
+  public async updateReview(@Param('id') id: string, @Body() body: ReviewDto) {
     return this.reviewService.update(id, body);
   }
 
@@ -84,7 +80,7 @@ export class ReviewController {
   @ApiOperation({ summary: 'Delete review' })
   @ApiUnauthorizedResponse(unauthorizedSchema)
   @ApiInternalServerErrorResponse(internalServerErrorSchema)
-  public async deleteReview(@Param('id') id: string): Promise<ServerResponse> {
+  public async deleteReview(@Param('id') id: string) {
     return this.reviewService.delete(id);
   }
 }

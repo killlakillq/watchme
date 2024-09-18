@@ -3,17 +3,18 @@ import { ReviewDto } from '@core/review/entities/dtos/review.dto';
 import { ReviewMethods } from '@core/review/entities/review.entity';
 import ReviewRepository from '@infrastructure/database/repositories/review.repository';
 import { ServerResponse } from '@common/types';
-import { EXCEPTIONS } from '@common/constants';
+import { EXCEPTION } from '@common/constants';
+import { Review, ReviewComment } from '@prisma/client';
 
 @Injectable()
 export class ReviewService implements ReviewMethods {
   public constructor(private readonly reviewRepository: ReviewRepository) {}
 
-  public async create(data: ReviewDto): Promise<ServerResponse> {
+  public async create(data: ReviewDto): Promise<ServerResponse<Review>> {
     const review = await this.reviewRepository.create(data);
 
     if (!review) {
-      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -23,11 +24,11 @@ export class ReviewService implements ReviewMethods {
     };
   }
 
-  public async find(): Promise<ServerResponse> {
+  public async find(): Promise<ServerResponse<Review[]>> {
     const review = await this.reviewRepository.find();
 
     if (!review) {
-      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -37,11 +38,11 @@ export class ReviewService implements ReviewMethods {
     };
   }
 
-  public async update(id: string, body: ReviewDto): Promise<ServerResponse> {
+  public async update(id: string, body: ReviewDto): Promise<ServerResponse<Review>> {
     const review = await this.reviewRepository.update(id, body);
 
     if (!review) {
-      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -51,11 +52,11 @@ export class ReviewService implements ReviewMethods {
     };
   }
 
-  public async delete(id: string): Promise<ServerResponse> {
+  public async delete(id: string): Promise<ServerResponse<Review>> {
     const review = await this.reviewRepository.delete(id);
 
     if (!review) {
-      throw new NotFoundException(EXCEPTIONS.REVIEW_NOT_FOUND);
+      throw new NotFoundException(EXCEPTION.REVIEW_NOT_FOUND);
     }
 
     return {
@@ -65,7 +66,7 @@ export class ReviewService implements ReviewMethods {
     };
   }
 
-  public async getReviewComment(id: string): Promise<ServerResponse> {
+  public async getReviewComment(id: string): Promise<ServerResponse<ReviewComment>> {
     const review = await this.reviewRepository.findReviewComment(id);
 
     return {
